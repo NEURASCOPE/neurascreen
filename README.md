@@ -47,6 +47,8 @@ This video was generated entirely by NeuraScreen from a JSON scenario — browse
 
 [![NeuraScreen Demo](https://img.youtube.com/vi/HWOPWmmiw-8/maxresdefault.jpg)](https://youtu.be/HWOPWmmiw-8)
 
+`5m30 video` · `67 automated steps` · `12 narrated segments` · `8 drag & drop interactions` · `0 manual editing`
+
 ---
 
 ## Quick Start
