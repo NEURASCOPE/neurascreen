@@ -16,6 +16,9 @@ on:
         required: true
         default: 'examples/01-simple-navigation.json'
 
+permissions:
+  contents: read
+
 jobs:
   generate:
     runs-on: macos-latest
@@ -30,28 +33,21 @@ jobs:
       - name: Install ffmpeg
         run: brew install ffmpeg
 
-      - name: Install dependencies
+      - name: Install package
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install -r requirements.txt
+          pip install -e .
           playwright install chromium
 
       - name: Configure
         run: |
           cp .env.example .env
-          # Override with your app URL
           echo "APP_URL=${{ vars.APP_URL }}" >> .env
 
       - name: Validate scenario
-        run: |
-          source .venv/bin/activate
-          python -m src validate ${{ github.event.inputs.scenario }}
+        run: neurascreen validate ${{ github.event.inputs.scenario }}
 
       - name: Generate video
-        run: |
-          source .venv/bin/activate
-          python -m src run ${{ github.event.inputs.scenario }}
+        run: neurascreen run ${{ github.event.inputs.scenario }}
 
       - name: Upload video
         uses: actions/upload-artifact@v4
