@@ -1,0 +1,63 @@
+{
+  "title": "Form Interaction Demo",
+  "description": "Fill a form, submit it, and verify the result",
+  "resolution": { "width": 1920, "height": 1080 },
+  "steps": [
+    {
+      "title": "Open form page",
+      "action": "navigate",
+      "url": "/contact",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Introduce the form",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "Let's see how to fill and submit a contact form in the application."
+    },
+    {
+      "title": "Fill name field",
+      "action": "type",
+      "selector": "input[name='name']",
+      "text": "Jane Doe",
+      "wait": 500,
+      "narration": ""
+    },
+    {
+      "title": "Fill email field",
+      "action": "type",
+      "selector": "input[name='email']",
+      "text": "jane@example.com",
+      "wait": 500,
+      "narration": ""
+    },
+    {
+      "title": "Fill message field",
+      "action": "type",
+      "selector": "textarea[name='message']",
+      "text": "Hello, I would like to learn more about your product.",
+      "wait": 1000,
+      "narration": ""
+    },
+    {
+      "title": "Explain what we did",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "We filled in the name, email and message fields. Now let's submit the form."
+    },
+    {
+      "title": "Submit form",
+      "action": "click",
+      "selector": "button[type='submit']",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Show result",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "The form has been submitted successfully. A confirmation message is displayed."
+    }
+  ]
+}

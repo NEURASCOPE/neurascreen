@@ -1,0 +1,67 @@
+{
+  "title": "Dashboard Walkthrough",
+  "description": "Interactive walkthrough of a dashboard with clicks, scrolls and explanations",
+  "resolution": { "width": 1920, "height": 1080 },
+  "steps": [
+    {
+      "title": "Open dashboard",
+      "action": "navigate",
+      "url": "/dashboard",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Introduction",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "Welcome to the dashboard walkthrough. We will explore the main sections and interact with key elements."
+    },
+    {
+      "title": "Click analytics tab",
+      "action": "click_text",
+      "text": "Analytics",
+      "wait": 1500,
+      "narration": ""
+    },
+    {
+      "title": "Explain analytics",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "The analytics section shows real-time metrics. Charts update automatically as new data comes in."
+    },
+    {
+      "title": "Scroll down to see more",
+      "action": "scroll",
+      "selector": "main",
+      "direction": "down",
+      "amount": 400,
+      "wait": 1000,
+      "narration": ""
+    },
+    {
+      "title": "Explain bottom section",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "Below the charts, you can see detailed tables with export options and filters."
+    },
+    {
+      "title": "Click a table row",
+      "action": "click_text",
+      "text": "View Details",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Show details",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "Clicking on a row opens its detail view. From here, you can edit, export or archive the record."
+    },
+    {
+      "title": "Conclusion",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "That wraps up the dashboard walkthrough. The interface is designed to be intuitive and efficient."
+    }
+  ]
+}

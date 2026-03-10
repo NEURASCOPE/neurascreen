@@ -1,0 +1,52 @@
+{
+  "title": "Simple Navigation Demo",
+  "description": "Navigate through pages and show key features",
+  "resolution": { "width": 1920, "height": 1080 },
+  "steps": [
+    {
+      "title": "Open homepage",
+      "action": "navigate",
+      "url": "/",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Introduce the app",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "Welcome to this demo. We are going to explore the main pages of the application."
+    },
+    {
+      "title": "Navigate to dashboard",
+      "action": "navigate",
+      "url": "/dashboard",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Describe dashboard",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "This is the dashboard. It provides an overview of all key metrics and recent activity."
+    },
+    {
+      "title": "Navigate to settings",
+      "action": "navigate",
+      "url": "/settings",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Describe settings",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "The settings page allows you to configure the application to match your needs."
+    },
+    {
+      "title": "Conclusion",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "That concludes our quick tour. In the next video, we will dive deeper into each feature."
+    }
+  ]
+}

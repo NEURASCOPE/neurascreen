@@ -1,0 +1,10 @@
+# Core
+playwright==1.52.0
+click==8.1.8
+python-dotenv==1.1.0
+requests>=2.31.0
+
+# TTS providers — install the one you need
+# gradium==0.5.11       # pip install gradium (for Gradium TTS)
+# TTS                   # pip install TTS (for Coqui self-hosted)
+# openai, elevenlabs, google use the requests library (already included)
