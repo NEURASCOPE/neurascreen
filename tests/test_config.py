@@ -73,3 +73,51 @@ class TestConfig:
 
         config = Config.load(str(env_file))
         assert config.app_url == "http://localhost:3000"
+
+    def test_login_selector_defaults(self, tmp_path):
+        env_file = tmp_path / ".env"
+        env_file.write_text("APP_URL=http://localhost\n")
+
+        config = Config.load(str(env_file))
+        assert "email" in config.login_email_selector
+        assert "password" in config.login_password_selector
+        assert "submit" in config.login_submit_selector
+
+    def test_login_selector_custom(self, tmp_path):
+        env_file = tmp_path / ".env"
+        env_file.write_text(
+            "APP_URL=http://localhost\n"
+            "LOGIN_EMAIL_SELECTOR=#username\n"
+            "LOGIN_PASSWORD_SELECTOR=#passwd\n"
+            "LOGIN_SUBMIT_SELECTOR=#login-btn\n"
+        )
+
+        config = Config.load(str(env_file))
+        assert config.login_email_selector == "#username"
+        assert config.login_password_selector == "#passwd"
+        assert config.login_submit_selector == "#login-btn"
+
+    def test_canvas_selector_defaults(self, tmp_path):
+        env_file = tmp_path / ".env"
+        env_file.write_text("APP_URL=http://localhost\n")
+
+        config = Config.load(str(env_file))
+        assert config.selector_draggable == "[draggable='true']"
+        assert config.selector_canvas == ".react-flow"
+        assert "Delete" in config.selector_delete_button
+        assert "zoom out" in config.selector_zoom_out
+        assert "fit view" in config.selector_fit_view
+
+    def test_canvas_selector_custom(self, tmp_path):
+        env_file = tmp_path / ".env"
+        env_file.write_text(
+            "APP_URL=http://localhost\n"
+            "SELECTOR_CANVAS=.my-canvas\n"
+            "SELECTOR_DRAGGABLE=.drag-item\n"
+            "SELECTOR_ZOOM_OUT=#zoom-minus\n"
+        )
+
+        config = Config.load(str(env_file))
+        assert config.selector_canvas == ".my-canvas"
+        assert config.selector_draggable == ".drag-item"
+        assert config.selector_zoom_out == "#zoom-minus"

@@ -174,6 +174,32 @@ class TestParseScenario:
         with pytest.raises(Exception):
             parse_scenario(str(f))
 
+    def test_parse_selectors(self, tmp_path):
+        data = {
+            "title": "With selectors",
+            "selectors": {
+                "selector_canvas": ".my-canvas",
+                "selector_draggable": ".my-draggable",
+            },
+            "steps": [{"action": "wait"}],
+        }
+        f = tmp_path / "selectors.json"
+        f.write_text(json.dumps(data))
+
+        scenario = parse_scenario(str(f))
+        assert scenario.selectors == {
+            "selector_canvas": ".my-canvas",
+            "selector_draggable": ".my-draggable",
+        }
+
+    def test_parse_no_selectors(self, tmp_path):
+        data = {"title": "No selectors", "steps": [{"action": "wait"}]}
+        f = tmp_path / "no_sel.json"
+        f.write_text(json.dumps(data))
+
+        scenario = parse_scenario(str(f))
+        assert scenario.selectors is None
+
 
 class TestExampleScenarios:
     """Validate all example scenarios shipped with the project."""

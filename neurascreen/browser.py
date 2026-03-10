@@ -24,10 +24,17 @@ class BrowserEngine:
         self.audio_map: dict[int, Path] = {}
         self.audio_timestamps: list[tuple[float, Path]] = []
         self._recording_start_time: float = 0.0
+        self._scenario_selectors: dict[str, str] = {}
         self._playwright: Playwright | None = None
         self._browser = None
         self._context: BrowserContext | None = None
         self._page: Page | None = None
+
+    def _sel(self, key: str) -> str:
+        """Resolve a selector: scenario override > config > default."""
+        if key in self._scenario_selectors:
+            return self._scenario_selectors[key]
+        return getattr(self.config, key, "")
 
     @property
     def page(self) -> Page | None:
@@ -110,9 +117,9 @@ class BrowserEngine:
         self._page.goto(login_url, wait_until="domcontentloaded", timeout=10000)
         self._page.wait_for_timeout(1000)
 
-        self._page.fill("input[name='email'], input[type='email']", self.config.app_email)
-        self._page.fill("input[name='password'], input[type='password']", self.config.app_password)
-        self._page.click("button[type='submit']")
+        self._page.fill(self._sel("login_email_selector"), self.config.app_email)
+        self._page.fill(self._sel("login_password_selector"), self.config.app_password)
+        self._page.click(self._sel("login_submit_selector"))
         self._page.wait_for_timeout(3000)
 
         current_url = self._page.url
@@ -126,6 +133,7 @@ class BrowserEngine:
         if not self._page:
             raise RuntimeError("Browser not started. Call start() first.")
 
+        self._scenario_selectors = scenario.selectors or {}
         logger.info(f"Executing scenario: {scenario.title} ({len(scenario.steps)} steps)")
         consecutive_failures = 0
 
@@ -262,7 +270,8 @@ class BrowserEngine:
             case "drag":
                 if not step.text:
                     raise ValueError("drag requires text (palette item name)")
-                palette_items = page.query_selector_all("[draggable='true']")
+                draggable_sel = self._sel("selector_draggable")
+                palette_items = page.query_selector_all(draggable_sel)
                 target_item = None
                 for pi in palette_items:
                     pi_name = pi.inner_text().strip().split("\n")[0]
@@ -276,9 +285,10 @@ class BrowserEngine:
                 ibox = target_item.bounding_box()
                 if not ibox:
                     raise ValueError(f"Palette item '{step.text}' has no bounding box")
-                canvas = page.query_selector(".react-flow")
+                canvas_sel = self._sel("selector_canvas")
+                canvas = page.query_selector(canvas_sel)
                 if not canvas:
-                    raise ValueError("Canvas (.react-flow) not found")
+                    raise ValueError(f"Canvas ({canvas_sel}) not found")
                 cbox = canvas.bounding_box()
                 if not cbox:
                     raise ValueError("Canvas has no bounding box")
@@ -298,31 +308,33 @@ class BrowserEngine:
                 time.sleep(1)
 
             case "delete_node":
-                nodes = page.query_selector_all(".react-flow__node")
+                canvas_sel = self._sel("selector_canvas")
+                nodes = page.query_selector_all(f"{canvas_sel}__node" if canvas_sel == ".react-flow" else f"{canvas_sel} [data-testid='node']")
+                if not nodes:
+                    nodes = page.query_selector_all(".react-flow__node")
                 if nodes:
-                    del_btn = nodes[-1].query_selector('button[title="Supprimer"], button[title="Delete"]')
+                    del_sel = self._sel("selector_delete_button")
+                    del_btn = nodes[-1].query_selector(del_sel)
                     if del_btn:
                         del_btn.click()
                         time.sleep(0.5)
 
             case "close_modal":
-                cancel_btn = page.locator(
-                    'div.fixed.inset-0 button:has-text("Annuler"), '
-                    'div.fixed.inset-0 button:has-text("Cancel"), '
-                    '[role="dialog"] button:has-text("Cancel"), '
-                    '[role="dialog"] button:has-text("Close")'
-                ).first
+                modal_sel = self._sel("selector_close_modal")
+                cancel_btn = page.locator(modal_sel).first
                 cancel_btn.click(timeout=5000)
                 time.sleep(0.8)
 
             case "zoom_out":
                 count = step.amount if step.amount > 0 else 5
+                zoom_sel = self._sel("selector_zoom_out")
                 for _ in range(count):
-                    page.click('button[title="zoom out"]')
+                    page.click(zoom_sel)
                     time.sleep(0.15)
 
             case "fit_view":
-                page.click('button[title="fit view"]')
+                fit_sel = self._sel("selector_fit_view")
+                page.click(fit_sel)
                 time.sleep(0.8)
 
             case "screenshot":
