@@ -39,6 +39,19 @@ class Config:
     tts_voice_id: str
     tts_model: str
 
+    # Login form selectors
+    login_email_selector: str
+    login_password_selector: str
+    login_submit_selector: str
+
+    # Canvas selectors (for drag, delete_node, close_modal, zoom_out, fit_view)
+    selector_draggable: str
+    selector_canvas: str
+    selector_delete_button: str
+    selector_close_modal: str
+    selector_zoom_out: str
+    selector_fit_view: str
+
     @classmethod
     def load(cls, env_path: str | None = None) -> "Config":
         """Load configuration from .env file."""
@@ -73,6 +86,36 @@ class Config:
             tts_api_key=os.getenv("TTS_API_KEY", ""),
             tts_voice_id=os.getenv("TTS_VOICE_ID", ""),
             tts_model=os.getenv("TTS_MODEL", "default"),
+            # Login form selectors
+            login_email_selector=os.getenv(
+                "LOGIN_EMAIL_SELECTOR", "input[name='email'], input[type='email']"
+            ),
+            login_password_selector=os.getenv(
+                "LOGIN_PASSWORD_SELECTOR", "input[name='password'], input[type='password']"
+            ),
+            login_submit_selector=os.getenv(
+                "LOGIN_SUBMIT_SELECTOR", "button[type='submit']"
+            ),
+            # Canvas selectors
+            selector_draggable=os.getenv("SELECTOR_DRAGGABLE", "[draggable='true']"),
+            selector_canvas=os.getenv("SELECTOR_CANVAS", ".react-flow"),
+            selector_delete_button=os.getenv(
+                "SELECTOR_DELETE_BUTTON",
+                'button[title="Delete"], button[title="Supprimer"]',
+            ),
+            selector_close_modal=os.getenv(
+                "SELECTOR_CLOSE_MODAL",
+                'div.fixed.inset-0 button:has-text("Cancel"), '
+                'div.fixed.inset-0 button:has-text("Annuler"), '
+                '[role="dialog"] button:has-text("Cancel"), '
+                '[role="dialog"] button:has-text("Close")',
+            ),
+            selector_zoom_out=os.getenv(
+                "SELECTOR_ZOOM_OUT", 'button[title="zoom out"]'
+            ),
+            selector_fit_view=os.getenv(
+                "SELECTOR_FIT_VIEW", 'button[title="fit view"]'
+            ),
         )
 
         # Ensure directories exist

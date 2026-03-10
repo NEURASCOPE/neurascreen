@@ -41,6 +41,7 @@ class Scenario:
     resolution: dict[str, int]
     steps: list[Step]
     source_path: str = ""
+    selectors: dict[str, str] | None = None
 
     @property
     def width(self) -> int:
@@ -146,4 +147,5 @@ def parse_scenario(path: str | Path) -> Scenario:
         resolution=data.get("resolution", {"width": 1920, "height": 1080}),
         steps=steps,
         source_path=str(path),
+        selectors=data.get("selectors"),
     )

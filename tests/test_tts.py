@@ -41,6 +41,15 @@ def _make_config(provider: str = "gradium", **overrides) -> Config:
         tts_api_key="test-key",
         tts_voice_id="test-voice",
         tts_model="default",
+        login_email_selector="input[name='email']",
+        login_password_selector="input[name='password']",
+        login_submit_selector="button[type='submit']",
+        selector_draggable="[draggable='true']",
+        selector_canvas=".react-flow",
+        selector_delete_button='button[title="Delete"]',
+        selector_close_modal='[role="dialog"] button:has-text("Close")',
+        selector_zoom_out='button[title="zoom out"]',
+        selector_fit_view='button[title="fit view"]',
     )
     defaults.update(overrides)
     return Config(**defaults)
