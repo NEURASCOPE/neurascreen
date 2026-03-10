@@ -44,11 +44,11 @@ Creating product demo videos is slow, repetitive and hard to maintain.
 
 ## Demo
 
-This video was generated entirely by NeuraScreen from a JSON scenario — browser automation, screen capture and TTS narration, all automatic:
+Watch NeuraScreen generate a full demo video from a JSON scenario — preview, TTS narration, browser automation, screen capture and final MP4:
 
-[![NeuraScreen Demo](https://img.youtube.com/vi/HWOPWmmiw-8/maxresdefault.jpg)](https://youtu.be/HWOPWmmiw-8)
+[![NeuraScreen in action](https://img.youtube.com/vi/yY05VSue5BI/maxresdefault.jpg)](https://youtu.be/yY05VSue5BI)
 
-`5m30 video` · `67 automated steps` · `12 narrated segments` · `8 drag & drop interactions` · `0 manual editing`
+`9m29 video` · `67 automated steps` · `12 narrated segments` · `8 drag & drop interactions` · `0 manual editing`
 
 ---
 
