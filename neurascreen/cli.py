@@ -16,6 +16,7 @@ from .utils import setup_logger, format_duration
 
 
 @click.group()
+@click.version_option(package_name="neurascreen")
 @click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
 @click.option("--headless", is_flag=True, help="Run browser in headless mode")
 @click.pass_context

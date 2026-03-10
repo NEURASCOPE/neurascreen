@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from src.tts import (
+from neurascreen.tts import (
     create_tts_client,
     get_wav_duration_ms,
     GradiumTTSClient,
@@ -17,7 +17,7 @@ from src.tts import (
     GoogleTTSClient,
     CoquiTTSClient,
 )
-from src.config import Config
+from neurascreen.config import Config
 
 
 def _make_config(provider: str = "gradium", **overrides) -> Config:

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from src.scenario import validate_scenario, parse_scenario, VALID_ACTIONS
+from neurascreen.scenario import validate_scenario, parse_scenario, VALID_ACTIONS
 
 
 class TestValidateScenario:

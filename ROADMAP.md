@@ -12,39 +12,31 @@
 - [x] Audio caching by content hash
 - [x] Example scenarios
 
-## v1.1 — Quality of Life
+## v1.1 — Packaging & Config
 
-- [ ] Linux screen capture via x11grab
-- [ ] Linux audio playback via aplay/paplay
-- [ ] Configurable login form selectors
-- [ ] Configurable canvas/modal selectors for drag/delete_node/close_modal
-- [ ] Better error messages with resolution hints
-- [ ] install.sh setup script
+- [x] pyproject.toml for `pip install neurascreen`
+- [x] `neurascreen` CLI entry point (instead of `python -m src`)
+- [x] `--version` flag
+- [ ] Configurable login form selectors (#3)
+- [ ] Configurable canvas/modal selectors for drag/delete_node/close_modal (#4)
+- [ ] Unit tests for assembler and utils (#5)
 
-## v1.2 — Developer Experience
+## v1.2 — Cross-platform
 
-- [ ] Unit tests for scenario parser and assembler
-- [ ] Integration tests with headless browser
-- [ ] GitHub Actions CI workflow example
-- [ ] pyproject.toml for pip install
-- [ ] `neurascreen` CLI entry point (instead of `python -m src`)
+- [ ] Linux screen capture via x11grab (#1)
+- [ ] Linux audio playback via aplay/paplay (#2)
+- [ ] Windows screen capture via gdigrab (#8)
 
-## v1.3 — New Features
+## v1.3 — Production features
 
-- [ ] Windows screen capture via gdigrab
-- [ ] Windows audio playback via powershell
-- [ ] Macro recorder: record browser interactions and generate JSON scenario automatically
-- [ ] Subtitle generation (SRT) from narration timestamps
-- [ ] Chapter markers for YouTube from scenario step titles
-- [ ] Intro/outro image overlay support
+- [ ] Subtitle generation (SRT) from narration timestamps (#10)
+- [ ] YouTube chapter markers from scenario step titles (#11)
+- [ ] Batch mode: generate multiple videos from a folder (#12)
 
-## v1.4 — Scale
+## v1.4 — Advanced
 
-- [ ] Batch mode: generate multiple videos from a folder of scenarios
-- [ ] Parallel TTS generation
-- [ ] Remote browser support (connect to existing Chrome/Chromium)
-- [ ] Docker container for headless generation
-- [ ] PyPI publication
+- [ ] Macro recorder: record browser interactions → JSON scenario (#9)
+- [ ] Docker container for headless generation (#13)
 
 ## Future Ideas
 

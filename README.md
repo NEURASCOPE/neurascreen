@@ -1,6 +1,7 @@
 # NeuraScreen
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-1.1.0-blue)
+![PyPI](https://img.shields.io/badge/pip_install-neurascreen-3775A9?logo=pypi&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)
 ![Playwright](https://img.shields.io/badge/playwright-1.52-2EAD33?logo=playwright&logoColor=white)
 ![ffmpeg](https://img.shields.io/badge/ffmpeg-required-007808?logo=ffmpeg&logoColor=white)
@@ -55,22 +56,25 @@ This video was generated entirely by NeuraScreen from a JSON scenario — browse
 
 ### 1. Install
 
-**Quick setup (recommended):**
+**Via pip (recommended):**
 
 ```bash
-git clone https://github.com/NEURASCOPE/neurascreen.git
-cd neurascreen
-chmod +x install.sh && ./install.sh
+pip install neurascreen
+playwright install chromium
 ```
 
-**Manual setup:**
+With a specific TTS provider:
+
+```bash
+pip install neurascreen[gradium]    # For Gradium TTS
+```
+
+**From source:**
 
 ```bash
 git clone https://github.com/NEURASCOPE/neurascreen.git
 cd neurascreen
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[dev]"
 playwright install chromium
 ```
 
@@ -93,13 +97,13 @@ TTS_VOICE_ID=alloy
 
 ```bash
 # Validate the scenario
-python -m src validate examples/01-simple-navigation.json
+neurascreen validate examples/01-simple-navigation.json
 
 # Preview in browser (no recording)
-python -m src preview examples/01-simple-navigation.json
+neurascreen preview examples/01-simple-navigation.json
 
 # Generate video with narration
-python -m src full examples/01-simple-navigation.json
+neurascreen full examples/01-simple-navigation.json
 ```
 
 Output: `output/01-simple-navigation.mp4`
@@ -132,13 +136,13 @@ Output: `output/01-simple-navigation.mp4`
 ### Step 2 — Validate
 
 ```bash
-python -m src validate my-scenario.json
+neurascreen validate my-scenario.json
 ```
 
 ### Step 3 — Generate
 
 ```bash
-python -m src full my-scenario.json
+neurascreen full my-scenario.json
 ```
 
 The output MP4 is in `output/`.
@@ -194,8 +198,8 @@ Start with an intro and end with a conclusion.
 The LLM produces the JSON. You validate and run it:
 
 ```bash
-python -m src validate scenario.json
-python -m src full scenario.json
+neurascreen validate scenario.json
+neurascreen full scenario.json
 ```
 
 ---
@@ -348,13 +352,16 @@ All settings are in `.env`. See [`.env.example`](.env.example) for the full docu
 
 | Command | Description |
 |---------|-------------|
-| `python -m src validate <file>` | Validate scenario JSON |
-| `python -m src preview <file>` | Run in browser without recording |
-| `python -m src run <file>` | Record video without narration |
-| `python -m src full <file>` | Record with TTS narration |
-| `python -m src list` | List available scenarios |
+| `neurascreen validate <file>` | Validate scenario JSON |
+| `neurascreen preview <file>` | Run in browser without recording |
+| `neurascreen run <file>` | Record video without narration |
+| `neurascreen full <file>` | Record with TTS narration |
+| `neurascreen list` | List available scenarios |
+| `neurascreen --version` | Show version |
 
 Options: `--verbose` / `-v` for debug output, `--headless` for headless mode.
+
+You can also use `python -m neurascreen` instead of `neurascreen`.
 
 ---
 
@@ -383,11 +390,11 @@ Installed automatically via `playwright install chromium` after pip install.
 ```
 neurascreen/
 ├── .env.example          # Configuration template
-├── requirements.txt      # Python dependencies
+├── pyproject.toml        # Package metadata & dependencies
 ├── LICENSE               # MIT
 ├── README.md
-├── src/
-│   ├── cli.py            # CLI commands
+├── neurascreen/          # Python package
+│   ├── cli.py            # CLI commands (entry point)
 │   ├── config.py         # Configuration loader
 │   ├── scenario.py       # JSON parser & validator
 │   ├── browser.py        # Playwright browser engine
@@ -396,6 +403,7 @@ neurascreen/
 │   ├── tts.py            # TTS abstraction (5 providers)
 │   ├── assembler.py      # Video assembly
 │   └── utils.py          # Helpers
+├── tests/                # Unit tests (pytest)
 ├── examples/             # Example scenarios
 ├── docs/                 # Documentation
 ├── output/               # Generated videos

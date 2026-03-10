@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from src.config import Config
+from neurascreen.config import Config
 
 
 class TestConfig:
