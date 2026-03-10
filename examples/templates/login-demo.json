@@ -1,0 +1,49 @@
+{
+  "title": "Login Flow Demo",
+  "description": "Template: demonstrate a login flow with form filling and redirect",
+  "resolution": { "width": 1920, "height": 1080 },
+  "steps": [
+    {
+      "title": "Open login page",
+      "action": "navigate",
+      "url": "/login",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Introduce login",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "This is the login page. Users authenticate with their email and password."
+    },
+    {
+      "title": "Fill email",
+      "action": "type",
+      "selector": "input[name='email']",
+      "text": "demo@example.com",
+      "wait": 500,
+      "narration": ""
+    },
+    {
+      "title": "Fill password",
+      "action": "type",
+      "selector": "input[name='password']",
+      "text": "demo-password",
+      "wait": 500,
+      "narration": ""
+    },
+    {
+      "title": "Click login",
+      "action": "click",
+      "selector": "button[type='submit']",
+      "wait": 3000,
+      "narration": ""
+    },
+    {
+      "title": "Show dashboard",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "After login, the user is redirected to the main dashboard."
+    }
+  ]
+}

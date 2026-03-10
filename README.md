@@ -41,12 +41,28 @@ Creating product demo videos is slow, repetitive and hard to maintain.
 
 ---
 
+## Demo
+
+> *Video coming soon — a screen recording of NeuraScreen generating a demo video from a JSON scenario.*
+
+---
+
 ## Quick Start
 
 ### 1. Install
 
+**Quick setup (recommended):**
+
 ```bash
-git clone https://github.com/your-org/neurascreen.git
+git clone https://github.com/NEURASCOPE/neurascreen.git
+cd neurascreen
+chmod +x install.sh && ./install.sh
+```
+
+**Manual setup:**
+
+```bash
+git clone https://github.com/NEURASCOPE/neurascreen.git
 cd neurascreen
 python3 -m venv .venv
 source .venv/bin/activate
@@ -338,14 +354,23 @@ Options: `--verbose` / `-v` for debug output, `--headless` for headless mode.
 
 ---
 
-## Prerequisites
+## System Dependencies
 
-| Dependency | Installation |
-|-----------|-------------|
-| **Python 3.12+** | [python.org](https://python.org) |
-| **ffmpeg** | `brew install ffmpeg` |
-| **Chromium** | `playwright install chromium` |
-| **TTS API key** | See TTS Providers (optional for `preview`/`run`) |
+### Python 3.12+
+
+Download from [python.org](https://python.org) or use your package manager.
+
+### ffmpeg
+
+| OS | Command |
+|----|---------|
+| **macOS** | `brew install ffmpeg` |
+| **Ubuntu/Debian** | `sudo apt install ffmpeg` |
+| **Windows** | `choco install ffmpeg` |
+
+### Playwright Chromium
+
+Installed automatically via `playwright install chromium` after pip install.
 
 ---
 
@@ -387,6 +412,14 @@ neurascreen/
 | Video assembly | Yes | Yes | Yes |
 
 ---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report bugs, suggest features, add TTS providers or submit pull requests.
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for planned features including Linux/Windows support, macro recorder, PyPI publication and more.
 
 ## License
 

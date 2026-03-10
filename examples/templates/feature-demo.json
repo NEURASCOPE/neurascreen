@@ -1,0 +1,60 @@
+{
+  "title": "Feature Demo",
+  "description": "Template: demonstrate a specific feature with click interactions",
+  "resolution": { "width": 1920, "height": 1080 },
+  "steps": [
+    {
+      "title": "Navigate to feature",
+      "action": "navigate",
+      "url": "/features/my-feature",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Introduction",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "In this video, we demonstrate the key capabilities of this feature."
+    },
+    {
+      "title": "Click action button",
+      "action": "click_text",
+      "text": "Create New",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Describe modal",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "A creation form opens. Users can fill in the required fields and submit."
+    },
+    {
+      "title": "Fill a field",
+      "action": "type",
+      "selector": "input[name='title']",
+      "text": "My first item",
+      "wait": 500,
+      "narration": ""
+    },
+    {
+      "title": "Submit",
+      "action": "click",
+      "selector": "button[type='submit']",
+      "wait": 2000,
+      "narration": ""
+    },
+    {
+      "title": "Show result",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "The item has been created successfully and appears in the list."
+    },
+    {
+      "title": "Conclusion",
+      "action": "wait",
+      "duration": 1000,
+      "narration": "This feature simplifies the creation workflow. Try it out."
+    }
+  ]
+}

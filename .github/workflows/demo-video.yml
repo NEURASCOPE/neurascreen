@@ -1,0 +1,61 @@
+# Example: Generate a demo video in CI
+#
+# This workflow shows how to use NeuraScreen in a GitHub Actions pipeline.
+# It validates a scenario and generates a video (without TTS narration).
+#
+# To generate with narration, add TTS_API_KEY to your repository secrets
+# and change "run" to "full".
+
+name: Generate Demo Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: 'Scenario file path'
+        required: true
+        default: 'examples/01-simple-navigation.json'
+
+jobs:
+  generate:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install ffmpeg
+        run: brew install ffmpeg
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          playwright install chromium
+
+      - name: Configure
+        run: |
+          cp .env.example .env
+          # Override with your app URL
+          echo "APP_URL=${{ vars.APP_URL }}" >> .env
+
+      - name: Validate scenario
+        run: |
+          source .venv/bin/activate
+          python -m src validate ${{ github.event.inputs.scenario }}
+
+      - name: Generate video
+        run: |
+          source .venv/bin/activate
+          python -m src run ${{ github.event.inputs.scenario }}
+
+      - name: Upload video
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-video
+          path: output/*.mp4
+          retention-days: 7
