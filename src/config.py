@@ -45,9 +45,9 @@ class Config:
         project_root = Path(__file__).parent.parent
 
         if env_path:
-            load_dotenv(env_path)
+            load_dotenv(env_path, override=True)
         else:
-            load_dotenv(project_root / ".env")
+            load_dotenv(project_root / ".env", override=True)
 
         config = cls(
             # Target application
