@@ -1,6 +1,6 @@
 # Roadmap
 
-## v1.0 — Current Release
+## v1.0 — Initial Release
 
 - [x] JSON scenario format with 14 browser actions
 - [x] Playwright browser engine with fullscreen CDP
@@ -38,10 +38,23 @@
 - [x] Macro recorder: record browser interactions → JSON scenario (#9)
 - [x] Docker container for headless generation (#13)
 
+## v1.5 — Desktop GUI (in progress)
+
+Optional PySide6 desktop interface: `pip install neurascreen[gui]`
+
+- [x] GUI foundation: main window, menu bar, toolbar, sidebar, status bar (#25)
+- [x] Theme engine: JSON palettes → dynamic QSS, dark teal + light themes (#25)
+- [x] Scenario editor: visual step list, adaptive detail panel, JSON source view (#26)
+- [x] Execution panel: run commands from GUI with real-time console logs (#27)
+- [ ] TTS & audio preview: per-step narration preview, pronunciation helper (#28)
+- [ ] Configuration manager: visual .env editor with tabbed interface (#29)
+- [ ] Output browser: browse generated videos, SRT/chapters viewers (#30)
+- [ ] Macro recorder integration: record browser interactions from GUI (#31)
+- [ ] Advanced: selector validator, scenario stats, diff viewer, autosave (#32)
+
 ## Future Ideas
 
 - Azure Speech TTS provider
 - Amazon Polly TTS provider
 - Whisper-based pronunciation validation
-- Web UI for scenario editing
 - AI-powered scenario repair (auto-fix broken selectors)

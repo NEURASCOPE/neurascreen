@@ -63,10 +63,12 @@ pip install neurascreen
 playwright install chromium
 ```
 
-With a specific TTS provider:
+With optional extras:
 
 ```bash
 pip install neurascreen[gradium]    # For Gradium TTS
+pip install neurascreen[gui]        # For desktop GUI (PySide6)
+pip install neurascreen[all]        # Everything
 ```
 
 **From source:**
@@ -361,10 +363,41 @@ All settings are in `.env`. See [`.env.example`](.env.example) for the full docu
 | `neurascreen record <url>` | Record browser interactions → JSON scenario |
 | `neurascreen list` | List available scenarios |
 | `neurascreen --version` | Show version |
+| `neurascreen gui` | Launch desktop GUI (requires `[gui]` extra) |
 
 Options: `--verbose` / `-v` for debug output, `--headless` for headless mode, `--srt` for subtitle generation, `--chapters` for YouTube chapter markers.
 
 You can also use `python -m neurascreen` instead of `neurascreen`.
+
+---
+
+## Desktop GUI
+
+NeuraScreen includes an optional desktop interface built with PySide6.
+
+### Install
+
+```bash
+pip install neurascreen[gui]
+```
+
+### Launch
+
+```bash
+neurascreen gui
+```
+
+### Features
+
+- **Scenario editor** — visual step list with drag-reorder, adaptive detail panel for all 14 action types, JSON source view with syntax highlighting, split view
+- **File browser** — sidebar tree view of your scenario folders, double-click to open
+- **Execution panel** — run validate/preview/run/full from the GUI with real-time colored console output
+- **Theme engine** — dark teal (default) and light themes, switchable via Ctrl+T. Create custom themes as JSON files in `~/.neurascreen/themes/`
+- **Step templates** — insert common patterns (navigation, drag & configure, form fill) from the context menu
+- **Undo/redo** — full undo history for all editing operations
+- **Keyboard shortcuts** — Ctrl+N/O/S, F5-F8 for commands, Ctrl+Z/Shift+Z for undo/redo
+
+The GUI is optional — the CLI remains the primary interface and works without PySide6.
 
 ---
 
@@ -408,7 +441,14 @@ neurascreen/
 │   ├── narrator.py       # TTS & timing sync
 │   ├── tts.py            # TTS abstraction (5 providers)
 │   ├── assembler.py      # Video assembly
-│   └── utils.py          # Helpers
+│   ├── utils.py          # Helpers
+│   └── gui/              # Optional desktop GUI (PySide6)
+│       ├── app.py        # QApplication entry point
+│       ├── main_window.py # Main window
+│       ├── theme.py      # Theme engine (JSON → QSS)
+│       ├── themes/       # Theme palettes (dark-teal, light)
+│       ├── editor/       # Scenario editor widgets
+│       └── execution/    # Command execution panel
 ├── tests/                # Unit tests (pytest)
 ├── examples/             # Example scenarios
 ├── docs/                 # Documentation
@@ -521,6 +561,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report bugs, suggest features,
 | [Cross-Platform Setup](docs/cross-platform.md) | macOS, Linux and Windows configuration |
 | [Macro Recorder](docs/macro-recorder.md) | Record browser interactions → JSON |
 | [Subtitles & Chapters](docs/subtitles-chapters.md) | SRT subtitles and YouTube chapters |
+| [Desktop GUI](docs/gui.md) | Visual scenario editor and execution |
 | [Docker](docs/docker.md) | Headless generation in containers |
 | [Contributing](CONTRIBUTING.md) | Add TTS providers, actions, or submit PRs |
 
