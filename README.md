@@ -1,6 +1,6 @@
 # NeuraScreen
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.3.0-blue)
 ![PyPI](https://img.shields.io/badge/pip_install-neurascreen-3775A9?logo=pypi&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)
 ![Playwright](https://img.shields.io/badge/playwright-1.52-2EAD33?logo=playwright&logoColor=white)
@@ -357,10 +357,11 @@ All settings are in `.env`. See [`.env.example`](.env.example) for the full docu
 | `neurascreen preview <file>` | Run in browser without recording |
 | `neurascreen run <file>` | Record video without narration |
 | `neurascreen full <file>` | Record with TTS narration |
+| `neurascreen batch <folder>` | Generate videos from all scenarios in a folder |
 | `neurascreen list` | List available scenarios |
 | `neurascreen --version` | Show version |
 
-Options: `--verbose` / `-v` for debug output, `--headless` for headless mode.
+Options: `--verbose` / `-v` for debug output, `--headless` for headless mode, `--srt` for subtitle generation, `--chapters` for YouTube chapter markers.
 
 You can also use `python -m neurascreen` instead of `neurascreen`.
 
@@ -401,6 +402,7 @@ neurascreen/
 │   ├── browser.py        # Playwright browser engine
 │   ├── platform.py       # OS detection & platform-specific commands
 │   ├── recorder.py       # Screen capture (ffmpeg)
+│   ├── subtitles.py      # SRT subtitles & YouTube chapters
 │   ├── narrator.py       # TTS & timing sync
 │   ├── tts.py            # TTS abstraction (5 providers)
 │   ├── assembler.py      # Video assembly

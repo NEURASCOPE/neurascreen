@@ -29,9 +29,9 @@
 
 ## v1.3 — Production features
 
-- [ ] Subtitle generation (SRT) from narration timestamps (#10)
-- [ ] YouTube chapter markers from scenario step titles (#11)
-- [ ] Batch mode: generate multiple videos from a folder (#12)
+- [x] Subtitle generation (SRT) from narration timestamps (#10)
+- [x] YouTube chapter markers from scenario step titles (#11)
+- [x] Batch mode: generate multiple videos from a folder (#12)
 
 ## v1.4 — Advanced
 
