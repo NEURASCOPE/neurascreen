@@ -482,6 +482,7 @@ QComboBox QAbstractItemView {{
 /* --- Check Box --- */
 QCheckBox {{
     spacing: {sp}px;
+    padding-right: 4px;
     color: {col('text')};
     font-size: {font_md}px;
 }}

@@ -18,7 +18,8 @@ COL_NUM = 0
 COL_ACTION = 1
 COL_TITLE = 2
 COL_NARRATION = 3
-NUM_COLS = 4
+COL_AUDIO = 4
+NUM_COLS = 5
 
 
 class StepListWidget(QWidget):
@@ -32,6 +33,7 @@ class StepListWidget(QWidget):
     request_move_up = Signal(int)
     request_move_down = Signal(int)
     request_insert_template = Signal(int, str)  # index, template_name
+    request_audio_preview = Signal(int, str)  # (step_index, narration_text)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -44,7 +46,7 @@ class StepListWidget(QWidget):
 
         # Table
         self._table = QTableWidget(0, NUM_COLS)
-        self._table.setHorizontalHeaderLabels(["#", "Action", "Title", "Narration"])
+        self._table.setHorizontalHeaderLabels(["#", "Action", "Title", "Narration", ""])
         self._table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self._table.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self._table.setAlternatingRowColors(True)
@@ -54,6 +56,7 @@ class StepListWidget(QWidget):
         self._table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self._table.customContextMenuRequested.connect(self._on_context_menu)
         self._table.currentCellChanged.connect(self._on_selection_changed)
+        self._table.verticalHeader().setDefaultSectionSize(34)
         self._table.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self._table.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
@@ -66,6 +69,8 @@ class StepListWidget(QWidget):
         header.setSectionResizeMode(COL_TITLE, QHeaderView.ResizeMode.Interactive)
         header.resizeSection(COL_TITLE, 180)
         header.setSectionResizeMode(COL_NARRATION, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(COL_AUDIO, QHeaderView.ResizeMode.Fixed)
+        header.resizeSection(COL_AUDIO, 48)
 
         layout.addWidget(self._table)
 
@@ -140,6 +145,25 @@ class StepListWidget(QWidget):
             if narration:
                 narration_item.setForeground(QColor("#F59E0B"))
             self._table.setItem(i, COL_NARRATION, narration_item)
+
+            # Audio preview button (only for narrated steps)
+            full_narration = step.get("narration", "")
+            if full_narration.strip():
+                btn = QPushButton("\u25B6")
+                btn.setFixedSize(32, 18)
+                btn.setStyleSheet("font-size: 8px; padding: 0px; margin: 0px;")
+                btn.setToolTip("Preview audio")
+                btn.clicked.connect(
+                    lambda _, idx=i, txt=full_narration: self.request_audio_preview.emit(idx, txt)
+                )
+                container = QWidget()
+                container_layout = QHBoxLayout(container)
+                container_layout.setContentsMargins(0, 0, 0, 0)
+                container_layout.setSpacing(0)
+                container_layout.addWidget(btn, 0, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+                self._table.setCellWidget(i, COL_AUDIO, container)
+            else:
+                self._table.setCellWidget(i, COL_AUDIO, None)
 
     def selected_indices(self) -> list[int]:
         """Return sorted list of selected row indices."""

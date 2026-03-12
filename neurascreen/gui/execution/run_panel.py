@@ -65,8 +65,11 @@ class RunPanel(QWidget):
         self._cb_verbose.setToolTip("Enable debug logging")
 
         controls_layout.addWidget(self._cb_srt)
+        controls_layout.addSpacing(6)
         controls_layout.addWidget(self._cb_chapters)
+        controls_layout.addSpacing(6)
         controls_layout.addWidget(self._cb_headless)
+        controls_layout.addSpacing(6)
         controls_layout.addWidget(self._cb_verbose)
 
         controls_layout.addStretch()
