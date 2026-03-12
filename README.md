@@ -1,6 +1,6 @@
 # NeuraScreen
 
-![Version](https://img.shields.io/badge/version-1.5.0-blue)
+![Version](https://img.shields.io/badge/version-1.6.0-blue)
 ![PyPI](https://img.shields.io/badge/pip_install-neurascreen-3775A9?logo=pypi&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)
 ![Playwright](https://img.shields.io/badge/playwright-1.52-2EAD33?logo=playwright&logoColor=white)
