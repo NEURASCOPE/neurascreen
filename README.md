@@ -1,6 +1,6 @@
 # NeuraScreen
 
-![Version](https://img.shields.io/badge/version-1.4.0-blue)
+![Version](https://img.shields.io/badge/version-1.5.0-blue)
 ![PyPI](https://img.shields.io/badge/pip_install-neurascreen-3775A9?logo=pypi&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)
 ![Playwright](https://img.shields.io/badge/playwright-1.52-2EAD33?logo=playwright&logoColor=white)
@@ -56,7 +56,13 @@ Watch NeuraScreen generate a full demo video from a JSON scenario — preview, T
 
 NeuraScreen includes an optional desktop application (PySide6) for editing scenarios, previewing TTS audio and managing configuration visually.
 
-![NeuraScreen GUI](docs/images/gui-screenshot.png)
+| Welcome | Editor | Configuration |
+|---------|--------|---------------|
+| ![Welcome](docs/images/capture_1.png) | ![Editor](docs/images/capture_2.png) | ![Config](docs/images/capture_5.png) |
+
+| Output Browser | Macro Recorder | JSON + Split View |
+|----------------|----------------|-------------------|
+| ![Output](docs/images/capture_12.png) | ![Macro](docs/images/capture_16.png) | ![Split](docs/images/capture_4.png) |
 
 Install with GUI support: `pip install neurascreen[gui]` then launch with `neurascreen gui`.
 
@@ -405,10 +411,15 @@ neurascreen gui
 - **Configuration manager** — visual .env editor with 7 tabs (Application, Browser, Screen Capture, TTS, Selectors, Directories), validation, import/export
 - **TTS & audio preview** — per-provider voice config (`~/.neurascreen/voices.json`), per-step audio preview, pronunciation helper, narration statistics
 - **Output browser** — browse generated videos with integrated video player (QMediaPlayer), SRT subtitles viewer, YouTube chapters viewer
-- **Theme engine** — dark teal (default) and light themes, switchable via Ctrl+T. Create custom themes as JSON files in `~/.neurascreen/themes/`
+- **Macro recorder** — record browser interactions from the GUI with live event feed, cleanup options, and direct import into the editor (Ctrl+R)
+- **Selector validator** — verify scenario selectors against the real DOM using Playwright headless, with found/not found/multiple status and suggestions (Ctrl+Shift+V)
+- **Scenario statistics** — steps count, actions breakdown, narration metrics, estimated duration, unique URLs and selectors
+- **Scenario diff** — compare two scenario files side by side with added/removed/modified/unchanged status
+- **Autosave & recovery** — periodic autosave every 60s, recovery prompt on startup
+- **Theme engine** — dark teal (default) and light themes with full Fusion style support, switchable via Ctrl+T. Create custom themes as JSON files in `~/.neurascreen/themes/`
 - **Step templates** — insert common patterns (navigation, drag & configure, form fill) from the context menu
 - **Undo/redo** — full undo history for all editing operations
-- **Keyboard shortcuts** — Ctrl+N/O/S, F5-F8 for commands, Ctrl+Shift+O for output browser, Ctrl+Shift+T for TTS panel
+- **Keyboard shortcuts** — 20+ shortcuts including Ctrl+N/O/S, F5-F8, Ctrl+R (record), Ctrl+Shift+V (validate selectors)
 
 The GUI is optional — the CLI remains the primary interface and works without PySide6.
 
@@ -465,7 +476,9 @@ neurascreen/
 │       ├── execution/    # Command execution panel
 │       ├── config/       # Configuration manager (.env editor)
 │       ├── tts/          # TTS panel, audio preview, voices, pronunciation
-│       └── output/       # Output browser, video player, SRT/chapters viewers
+│       ├── output/       # Output browser, video player, SRT/chapters viewers
+│       ├── macro/        # Macro recorder dialog, event feed, cleanup
+│       └── advanced/     # Selector validator, statistics, diff, autosave
 ├── tests/                # Unit tests (pytest)
 ├── examples/             # Example scenarios
 ├── docs/                 # Documentation
