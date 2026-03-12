@@ -1,4 +1,4 @@
-"""Video recording orchestrator using macOS screen capture via ffmpeg avfoundation."""
+"""Video recording orchestrator using native screen capture via ffmpeg."""
 
 import logging
 import signal
@@ -9,6 +9,7 @@ from pathlib import Path
 from .config import Config
 from .scenario import Scenario
 from .browser import BrowserEngine
+from .platform import get_capture_command, get_platform_name
 
 logger = logging.getLogger("videogen")
 
@@ -24,25 +25,17 @@ class Recorder:
         self._ffmpeg_process: subprocess.Popen | None = None
 
     def _start_screen_capture(self, output_path: Path) -> None:
-        """Start ffmpeg avfoundation screen capture in background."""
+        """Start ffmpeg screen capture in background (platform-aware)."""
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        cmd = [
-            "ffmpeg", "-y",
-            "-f", "avfoundation",
-            "-framerate", str(self.config.video_fps),
-            "-capture_cursor", "1",
-            "-i", f"{self.config.capture_screen}:none",
-            "-c:v", "libx264",
-            "-preset", "ultrafast",
-            "-crf", "15",
-            "-pix_fmt", "yuv420p",
-            "-r", str(self.config.video_fps),
-            "-f", "matroska",
-            str(output_path),
-        ]
+        cmd = get_capture_command(
+            output_path=str(output_path),
+            fps=self.config.video_fps,
+            capture_screen=self.config.capture_screen,
+            capture_display=self.config.capture_display,
+        )
 
-        logger.info(f"Starting screen capture (screen {self.config.capture_screen})...")
+        logger.info(f"Starting screen capture on {get_platform_name()} (screen {self.config.capture_screen})...")
         self._ffmpeg_process = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
