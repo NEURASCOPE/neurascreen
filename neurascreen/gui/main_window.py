@@ -8,7 +8,7 @@ from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QSplitter, QToolBar,
-    QStatusBar, QDockWidget, QFileDialog,
+    QStatusBar, QDockWidget, QFileDialog, QMenu,
     QMessageBox, QStackedWidget,
     QApplication,
 )
@@ -20,6 +20,11 @@ from .execution.run_panel import RunPanel
 from .config.config_dialog import ConfigDialog
 from .tts.tts_panel import TTSPanel
 from .output.output_browser import OutputBrowser
+from .macro.recorder_dialog import RecorderDialog
+from .advanced.statistics import StatisticsDialog
+from .advanced.diff_viewer import DiffDialog
+from .advanced.selector_validator import SelectorValidatorDialog
+from .advanced.autosave import AutosaveManager, prompt_recovery
 
 logger = logging.getLogger("neurascreen.gui")
 
@@ -58,6 +63,8 @@ class MainWindow(QMainWindow):
         self._load_recent_files()
         self._init_sidebar_roots()
         self._load_tts_config()
+        self._setup_autosave()
+        self._check_recovery()
 
         logger.info("Main window initialized")
 
@@ -269,7 +276,8 @@ class MainWindow(QMainWindow):
         self._act_open.triggered.connect(self._on_open)
         file_menu.addAction(self._act_open)
 
-        self._recent_menu = file_menu.addMenu("Open &Recent")
+        self._recent_menu = QMenu("Open &Recent", self)
+        file_menu.addMenu(self._recent_menu)
         self._update_recent_menu()
 
         file_menu.addSeparator()
@@ -414,7 +422,28 @@ class MainWindow(QMainWindow):
         self._act_record_macro = QAction("Record &Macro...", self)
         self._act_record_macro.setShortcut(QKeySequence("Ctrl+R"))
         self._act_record_macro.setStatusTip("Record browser interactions to JSON")
+        self._act_record_macro.triggered.connect(self._on_record_macro)
         tools_menu.addAction(self._act_record_macro)
+
+        self._act_validate_selectors = QAction("Validate &Selectors...", self)
+        self._act_validate_selectors.setShortcut(QKeySequence("Ctrl+Shift+V"))
+        self._act_validate_selectors.setStatusTip("Validate selectors against real DOM")
+        self._act_validate_selectors.setEnabled(False)
+        self._act_validate_selectors.triggered.connect(self._on_validate_selectors)
+        tools_menu.addAction(self._act_validate_selectors)
+
+        tools_menu.addSeparator()
+
+        self._act_statistics = QAction("S&tatistics...", self)
+        self._act_statistics.setStatusTip("Show scenario statistics")
+        self._act_statistics.setEnabled(False)
+        self._act_statistics.triggered.connect(self._on_statistics)
+        tools_menu.addAction(self._act_statistics)
+
+        self._act_diff = QAction("Compare &Scenarios...", self)
+        self._act_diff.setStatusTip("Compare two scenario files")
+        self._act_diff.triggered.connect(self._on_diff)
+        tools_menu.addAction(self._act_diff)
 
         # -- Help --
         help_menu = mb.addMenu("&Help")
@@ -448,6 +477,8 @@ class MainWindow(QMainWindow):
         toolbar.addAction(self._act_preview)
         toolbar.addAction(self._act_run)
         toolbar.addAction(self._act_full)
+        toolbar.addSeparator()
+        toolbar.addAction(self._act_record_macro)
 
         self.addToolBar(toolbar)
 
@@ -503,6 +534,8 @@ class MainWindow(QMainWindow):
         self._act_preview.setEnabled(enabled)
         self._act_run.setEnabled(enabled)
         self._act_full.setEnabled(enabled)
+        self._act_validate_selectors.setEnabled(enabled)
+        self._act_statistics.setEnabled(enabled)
 
     def _show_editor(self) -> None:
         """Switch to the editor view."""
@@ -652,6 +685,7 @@ class MainWindow(QMainWindow):
 
     def _on_switch_theme(self, name: str) -> None:
         theme = self.theme_engine.apply_theme(name)
+        self._apply_theme_to_widgets(theme)
         self._status_theme.setText(f"Theme: {theme.name}")
         self.settings.setValue(SETTINGS_THEME, name)
         self._update_theme_menu_checks(name)
@@ -659,11 +693,20 @@ class MainWindow(QMainWindow):
 
     def _on_cycle_theme(self) -> None:
         theme = self.theme_engine.cycle_theme()
+        self._apply_theme_to_widgets(theme)
         name = theme.source_path.stem if theme.source_path else ""
         self._status_theme.setText(f"Theme: {theme.name}")
         self.settings.setValue(SETTINGS_THEME, name)
         self._update_theme_menu_checks(name)
         self.set_status(f"Theme: {theme.name}")
+
+    def _apply_theme_to_widgets(self, theme) -> None:
+        """Propagate theme changes to widgets with hardcoded colors."""
+        is_dark = theme.is_dark
+        # Editor JSON view + syntax highlighter
+        self._editor.set_dark_mode(is_dark)
+        # Step list refresh (action colors adapt via theme)
+        self._editor.refresh_step_list()
 
     def _update_theme_menu_checks(self, active_name: str) -> None:
         for action in self.menuBar().actions():
@@ -677,6 +720,26 @@ class MainWindow(QMainWindow):
                             theme_act.setChecked(theme_id == active_name)
                         break
                 break
+
+    def _on_record_macro(self) -> None:
+        """Open the macro recorder dialog."""
+        # Load default URL from config
+        default_url = ""
+        try:
+            from neurascreen.config import Config
+            config = Config.load()
+            default_url = config.app_url or ""
+        except Exception:
+            pass
+
+        dialog = RecorderDialog(parent=self, default_url=default_url)
+        dialog.scenario_ready.connect(self._on_recorded_scenario)
+        dialog.exec()
+
+    def _on_recorded_scenario(self, filepath: str) -> None:
+        """Open a recorded scenario in the editor."""
+        self._open_file(filepath)
+        self.set_status("Recorded scenario loaded")
 
     def _on_config(self) -> None:
         """Open the configuration dialog."""
@@ -708,6 +771,7 @@ class MainWindow(QMainWindow):
             ("F7", "Run"),
             ("F8", "Full (with TTS)"),
             ("Ctrl+R", "Record macro"),
+            ("Ctrl+Shift+V", "Validate selectors"),
             ("Ctrl+,", "Configuration"),
             ("Ctrl+Shift+O", "Output browser"),
             ("Ctrl+Shift+T", "TTS panel"),
@@ -721,6 +785,56 @@ class MainWindow(QMainWindow):
             self, "Keyboard Shortcuts",
             f"NeuraScreen Shortcuts\n\n{text}",
         )
+
+    # ------------------------------------------------------------------ #
+    #  Advanced features                                                   #
+    # ------------------------------------------------------------------ #
+
+    def _on_validate_selectors(self) -> None:
+        """Open the selector validator dialog."""
+        default_url = ""
+        try:
+            from neurascreen.config import Config
+            config = Config.load()
+            default_url = config.app_url or ""
+        except Exception:
+            pass
+
+        dialog = SelectorValidatorDialog(
+            self._editor._steps, parent=self, default_url=default_url
+        )
+        dialog.step_requested.connect(self._editor._step_list.select_row)
+        dialog.exec()
+
+    def _on_statistics(self) -> None:
+        """Show scenario statistics dialog."""
+        title = self._editor._metadata.get("title", "")
+        dialog = StatisticsDialog(self._editor._steps, title=title, parent=self)
+        dialog.exec()
+
+    def _on_diff(self) -> None:
+        """Open the scenario diff dialog."""
+        dialog = DiffDialog(parent=self)
+        dialog.exec()
+
+    def _setup_autosave(self) -> None:
+        """Set up periodic autosave."""
+        self._autosave = AutosaveManager()
+        self._autosave.start(self._get_autosave_scenario)
+
+    def _get_autosave_scenario(self) -> dict | None:
+        """Return current scenario data for autosave, or None."""
+        if not self._editor.is_dirty:
+            return None
+        return self._editor._build_scenario_dict()
+
+    def _check_recovery(self) -> None:
+        """Check for autosave recovery on startup."""
+        scenario = prompt_recovery(parent=self)
+        if scenario:
+            self._editor.load_scenario_dict(scenario)
+            self._show_editor()
+            self.set_status("Recovered autosaved scenario")
 
     def _on_about(self) -> None:
         version = self._get_version()

@@ -54,9 +54,8 @@ class ConsoleWidget(QWidget):
 
         layout.addLayout(btn_layout)
 
-        # Formats for different log levels
+        # Formats — info uses no forced foreground (inherits from QSS theme)
         self._fmt_info = QTextCharFormat()
-        self._fmt_info.setForeground(QColor("#F8FAFC"))
 
         self._fmt_warning = QTextCharFormat()
         self._fmt_warning.setForeground(QColor("#F59E0B"))

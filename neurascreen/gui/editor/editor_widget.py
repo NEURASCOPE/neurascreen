@@ -67,6 +67,16 @@ class EditorWidget(QWidget):
     def is_dirty(self) -> bool:
         return self._dirty
 
+    def set_dark_mode(self, dark: bool) -> None:
+        """Update color-sensitive widgets for dark/light mode."""
+        self._dark = dark
+        self._json_view.set_dark_mode(dark)
+        self._split_json.set_dark_mode(dark)
+
+    def refresh_step_list(self) -> None:
+        """Re-render step list (e.g. after theme change)."""
+        self._step_list.refresh()
+
     # ------------------------------------------------------------------ #
     #  UI setup                                                           #
     # ------------------------------------------------------------------ #
@@ -275,6 +285,22 @@ class EditorWidget(QWidget):
         if self._selectors:
             data["selectors"] = self._selectors.copy()
         return data
+
+    def load_scenario_dict(self, data: dict) -> None:
+        """Load scenario from a dict (e.g. from autosave recovery)."""
+        self._file_path = ""
+        self._metadata = {
+            "title": data.get("title", "Recovered"),
+            "description": data.get("description", ""),
+            "resolution": data.get("resolution", {"width": 1920, "height": 1080}),
+        }
+        self._steps = data.get("steps", [])
+        self._selectors = data.get("selectors", {})
+        self._undo_stack.clear()
+        self._load_into_ui()
+        self._set_dirty(True)
+        self.title_changed.emit(self._metadata["title"])
+        self._validate()
 
     def _confirm_discard(self) -> bool:
         """Ask user to confirm discarding unsaved changes."""
@@ -492,13 +518,19 @@ class EditorWidget(QWidget):
         errors = validate_scenario(data)
         if errors:
             self._validation_label.setText(f"\u26A0 {len(errors)} error(s)")
-            self._validation_label.setStyleSheet("color: #EF4444;")
+            self._validation_label.setProperty("error_label", True)
+            self._validation_label.setProperty("success_label", False)
+            self._validation_label.style().unpolish(self._validation_label)
+            self._validation_label.style().polish(self._validation_label)
             self._validation_label.setToolTip("\n".join(f"- {e}" for e in errors))
         else:
             count = len(self._steps)
             narrated = sum(1 for s in self._steps if s.get("narration", "").strip())
             self._validation_label.setText(f"\u2713 Valid ({count} steps, {narrated} narrated)")
-            self._validation_label.setStyleSheet("color: #22C55E;")
+            self._validation_label.setProperty("error_label", False)
+            self._validation_label.setProperty("success_label", True)
+            self._validation_label.style().unpolish(self._validation_label)
+            self._validation_label.style().polish(self._validation_label)
             self._validation_label.setToolTip("")
 
     # ------------------------------------------------------------------ #

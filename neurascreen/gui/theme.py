@@ -4,6 +4,7 @@ import json
 import logging
 from pathlib import Path
 
+from PySide6.QtGui import QColor, QPalette
 from PySide6.QtWidgets import QApplication
 
 logger = logging.getLogger("neurascreen.gui")
@@ -121,6 +122,7 @@ class ThemeEngine:
         target = app or QApplication.instance()
         if target:
             target.setStyleSheet(qss)
+            _apply_palette(theme, target)
             logger.info(f"Applied theme: {theme.name}")
         else:
             logger.warning("No QApplication instance to apply theme to")
@@ -152,6 +154,81 @@ class ThemeEngine:
     def reload(self) -> None:
         """Re-discover themes (useful after user adds a new theme file)."""
         self._discover_themes()
+
+
+def _apply_palette(theme: Theme, app: QApplication) -> None:
+    """Set the QPalette to match the theme so Fusion respects our colors.
+
+    Note: Fusion uses HighlightedText for pressed button text, so we must
+    keep it dark in light themes to avoid white-on-light flash.
+    The QSS ::item:selected rules handle list/tree selection text separately.
+    """
+    c = theme.colors
+    text_color = QColor(c.get("text", "#0F172A"))
+    palette = QPalette()
+
+    bg_color = QColor(c.get("background", "#F8FAFC"))
+    surface_color = QColor(c.get("surface", "#FFFFFF"))
+    surface_alt = QColor(c.get("surface_alt", "#F1F5F9"))
+    border_color = QColor(c.get("border", "#CBD5E1"))
+    selection_color = QColor(c.get("selection", "#0D9488"))
+    hover_color = QColor(c.get("hover", "#E2E8F0"))
+    muted_color = QColor(c.get("text_muted", "#94A3B8"))
+
+    tooltip_bg = QColor(c.get("tooltip_bg", "#333"))
+    tooltip_text = QColor(c.get("tooltip_text", "#FFF"))
+    disabled_text = QColor(c.get("disabled_text", "#CBD5E1"))
+    disabled_bg = QColor(c.get("disabled_bg", "#F1F5F9"))
+
+    palette = QPalette()
+
+    # Set colors for ALL three color groups so Fusion never falls back
+    # to system defaults (which cause white text on pressed buttons).
+    for group in (
+        QPalette.ColorGroup.Active,
+        QPalette.ColorGroup.Inactive,
+    ):
+        # Text roles — all dark in light theme, all light in dark theme
+        for role in (
+            QPalette.ColorRole.WindowText,
+            QPalette.ColorRole.Text,
+            QPalette.ColorRole.ButtonText,
+            QPalette.ColorRole.HighlightedText,
+            QPalette.ColorRole.BrightText,
+        ):
+            palette.setColor(group, role, text_color)
+
+        # Background roles
+        palette.setColor(group, QPalette.ColorRole.Window, bg_color)
+        palette.setColor(group, QPalette.ColorRole.Base, surface_color)
+        palette.setColor(group, QPalette.ColorRole.AlternateBase, surface_alt)
+        palette.setColor(group, QPalette.ColorRole.Button, surface_alt)
+        palette.setColor(group, QPalette.ColorRole.Highlight, selection_color)
+        palette.setColor(group, QPalette.ColorRole.Light, hover_color)
+        palette.setColor(group, QPalette.ColorRole.Midlight, hover_color)
+        palette.setColor(group, QPalette.ColorRole.Mid, border_color)
+        palette.setColor(group, QPalette.ColorRole.Dark, border_color)
+        palette.setColor(group, QPalette.ColorRole.Shadow, border_color)
+        palette.setColor(group, QPalette.ColorRole.PlaceholderText, muted_color)
+        palette.setColor(group, QPalette.ColorRole.ToolTipBase, tooltip_bg)
+        palette.setColor(group, QPalette.ColorRole.ToolTipText, tooltip_text)
+
+    # Disabled group
+    for role in (
+        QPalette.ColorRole.WindowText,
+        QPalette.ColorRole.Text,
+        QPalette.ColorRole.ButtonText,
+        QPalette.ColorRole.HighlightedText,
+        QPalette.ColorRole.BrightText,
+    ):
+        palette.setColor(QPalette.ColorGroup.Disabled, role, disabled_text)
+
+    palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, bg_color)
+    palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Base, disabled_bg)
+    palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, disabled_bg)
+    palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Highlight, border_color)
+
+    app.setPalette(palette)
 
 
 def generate_qss(theme: Theme) -> str:
@@ -223,8 +300,8 @@ QMenuBar::item:selected {{
 }}
 
 QMenuBar::item:pressed {{
-    background-color: {col('primary')};
-    color: {col('selection_text')};
+    background-color: {col('pressed')};
+    color: {col('pressed_text', col('text'))};
 }}
 
 /* --- Menus --- */
@@ -289,7 +366,7 @@ QToolButton:hover {{
 
 QToolButton:pressed {{
     background-color: {col('pressed')};
-    color: {col('selection_text')};
+    color: {col('pressed_text', col('text'))};
 }}
 
 QToolButton:checked {{
@@ -320,7 +397,7 @@ QPushButton:hover {{
 
 QPushButton:pressed {{
     background-color: {col('pressed')};
-    color: {col('selection_text')};
+    color: {col('pressed_text', col('text'))};
     border-color: {col('primary_dark')};
 }}
 
@@ -598,6 +675,17 @@ QListView::item:selected, QTreeView::item:selected, QTableView::item:selected {{
 
 QListView::item:hover, QTreeView::item:hover, QTableView::item:hover {{
     background-color: {col('hover')};
+    color: {col('text')};
+}}
+
+QListView::item:selected:hover, QTreeView::item:selected:hover, QTableView::item:selected:hover {{
+    background-color: {col('selection')};
+    color: {col('selection_text')};
+}}
+
+QListView::item:pressed, QTreeView::item:pressed, QTableView::item:pressed {{
+    background-color: {col('selection')};
+    color: {col('selection_text')};
 }}
 
 QHeaderView::section {{
@@ -666,6 +754,21 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{
 
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {{
     background: none;
+}}
+
+/* --- Scroll Area --- */
+QScrollArea {{
+    background-color: {col('surface')};
+    border: none;
+}}
+
+QScrollArea > QWidget > QWidget {{
+    background-color: {col('surface')};
+}}
+
+/* --- Stacked Widget --- */
+QStackedWidget {{
+    background-color: {col('background')};
 }}
 
 /* --- Splitter --- */
@@ -763,6 +866,14 @@ QLabel[subheading="true"] {{
 QLabel[muted="true"] {{
     color: {col('text_muted')};
     font-size: {font_sm}px;
+}}
+
+QLabel[error_label="true"] {{
+    color: {col('error')};
+}}
+
+QLabel[success_label="true"] {{
+    color: {col('success')};
 }}
 
 /* --- Frame --- */

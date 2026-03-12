@@ -361,11 +361,17 @@ class ConfigDialog(QDialog):
 
         if errors:
             self._validation_label.setText(f"{len(errors)} error(s): {errors[0]}")
-            self._validation_label.setStyleSheet("color: #EF4444;")
+            self._validation_label.setProperty("error_label", True)
+            self._validation_label.setProperty("success_label", False)
+            self._validation_label.style().unpolish(self._validation_label)
+            self._validation_label.style().polish(self._validation_label)
             self._validation_label.setToolTip("\n".join(errors))
         else:
             self._validation_label.setText("Configuration valid")
-            self._validation_label.setStyleSheet("color: #22C55E;")
+            self._validation_label.setProperty("error_label", False)
+            self._validation_label.setProperty("success_label", True)
+            self._validation_label.style().unpolish(self._validation_label)
+            self._validation_label.style().polish(self._validation_label)
             self._validation_label.setToolTip("")
 
         return errors
