@@ -286,6 +286,22 @@ class EditorWidget(QWidget):
             data["selectors"] = self._selectors.copy()
         return data
 
+    def load_scenario_dict(self, data: dict) -> None:
+        """Load scenario from a dict (e.g. from autosave recovery)."""
+        self._file_path = ""
+        self._metadata = {
+            "title": data.get("title", "Recovered"),
+            "description": data.get("description", ""),
+            "resolution": data.get("resolution", {"width": 1920, "height": 1080}),
+        }
+        self._steps = data.get("steps", [])
+        self._selectors = data.get("selectors", {})
+        self._undo_stack.clear()
+        self._load_into_ui()
+        self._set_dirty(True)
+        self.title_changed.emit(self._metadata["title"])
+        self._validate()
+
     def _confirm_discard(self) -> bool:
         """Ask user to confirm discarding unsaved changes."""
         result = QMessageBox.question(
