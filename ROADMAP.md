@@ -35,8 +35,8 @@
 
 ## v1.4 — Advanced
 
-- [ ] Macro recorder: record browser interactions → JSON scenario (#9)
-- [ ] Docker container for headless generation (#13)
+- [x] Macro recorder: record browser interactions → JSON scenario (#9)
+- [x] Docker container for headless generation (#13)
 
 ## Future Ideas
 

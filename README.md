@@ -1,6 +1,6 @@
 # NeuraScreen
 
-![Version](https://img.shields.io/badge/version-1.3.0-blue)
+![Version](https://img.shields.io/badge/version-1.4.0-blue)
 ![PyPI](https://img.shields.io/badge/pip_install-neurascreen-3775A9?logo=pypi&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)
 ![Playwright](https://img.shields.io/badge/playwright-1.52-2EAD33?logo=playwright&logoColor=white)
@@ -358,6 +358,7 @@ All settings are in `.env`. See [`.env.example`](.env.example) for the full docu
 | `neurascreen run <file>` | Record video without narration |
 | `neurascreen full <file>` | Record with TTS narration |
 | `neurascreen batch <folder>` | Generate videos from all scenarios in a folder |
+| `neurascreen record <url>` | Record browser interactions → JSON scenario |
 | `neurascreen list` | List available scenarios |
 | `neurascreen --version` | Show version |
 
@@ -403,6 +404,7 @@ neurascreen/
 │   ├── platform.py       # OS detection & platform-specific commands
 │   ├── recorder.py       # Screen capture (ffmpeg)
 │   ├── subtitles.py      # SRT subtitles & YouTube chapters
+│   ├── macro.py          # Macro recorder (browser → JSON)
 │   ├── narrator.py       # TTS & timing sync
 │   ├── tts.py            # TTS abstraction (5 providers)
 │   ├── assembler.py      # Video assembly
@@ -429,13 +431,102 @@ neurascreen/
 
 ---
 
+## Macro Recorder
+
+Generate scenarios by recording your browser interactions instead of writing JSON by hand:
+
+```bash
+neurascreen record http://localhost:3000 -t "My demo"
+```
+
+A browser opens. Click around normally. Close it when done. The tool outputs a valid JSON scenario.
+
+```bash
+# Review and edit the generated scenario
+neurascreen validate output/my_demo.json
+neurascreen preview output/my_demo.json
+
+# Add narration to wait steps, then generate the video
+neurascreen full output/my_demo.json
+```
+
+See [docs/macro-recorder.md](docs/macro-recorder.md) for the full guide.
+
+---
+
+## Subtitles & YouTube Chapters
+
+Generate SRT subtitles and YouTube chapter markers alongside your videos:
+
+```bash
+# Video + subtitles + chapters
+neurascreen full --srt --chapters scenario.json
+```
+
+Output:
+- `output/scenario.mp4` — the video
+- `output/scenario.srt` — subtitles (upload to YouTube Studio or use with VLC)
+- `output/scenario.chapters.txt` — chapter markers (paste into YouTube description)
+
+See [docs/subtitles-chapters.md](docs/subtitles-chapters.md) for details.
+
+---
+
+## Batch Mode
+
+Process all scenarios in a folder in one command:
+
+```bash
+# With narration
+neurascreen batch scenarios/ --srt --chapters
+
+# Without narration (faster)
+neurascreen batch scenarios/ --no-narration
+```
+
+Validates all scenarios upfront, processes them sequentially, and prints a summary report.
+
+---
+
+## Docker
+
+Run NeuraScreen in a container for headless video generation (no display required):
+
+```bash
+# Build
+docker build -t neurascreen .
+
+# Generate a video
+docker run --rm \
+  -v ./scenarios:/app/examples \
+  -v ./output:/app/output \
+  -e APP_URL=http://host.docker.internal:3000 \
+  -e TTS_PROVIDER=openai -e TTS_API_KEY=sk-... -e TTS_VOICE_ID=alloy \
+  neurascreen full examples/demo.json --srt --chapters
+```
+
+The container includes Xvfb (virtual display) and PulseAudio (audio playback). See [docs/docker.md](docs/docker.md) for CI/CD integration, networking and troubleshooting.
+
+---
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report bugs, suggest features, add TTS providers or submit pull requests.
 
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Scenario Writing Guide](docs/scenario-guide.md) | How to write effective demo scenarios |
+| [Cross-Platform Setup](docs/cross-platform.md) | macOS, Linux and Windows configuration |
+| [Macro Recorder](docs/macro-recorder.md) | Record browser interactions → JSON |
+| [Subtitles & Chapters](docs/subtitles-chapters.md) | SRT subtitles and YouTube chapters |
+| [Docker](docs/docker.md) | Headless generation in containers |
+| [Contributing](CONTRIBUTING.md) | Add TTS providers, actions, or submit PRs |
+
 ## Roadmap
 
-See [ROADMAP.md](ROADMAP.md) for planned features including Linux/Windows support, macro recorder, PyPI publication and more.
+See [ROADMAP.md](ROADMAP.md) for planned features.
 
 ## License
 

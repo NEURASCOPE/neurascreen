@@ -334,6 +334,34 @@ def batch(ctx: click.Context, folder_path: str, srt: bool, chapters: bool, narra
         sys.exit(1)
 
 
+@cli.command("record")
+@click.argument("url")
+@click.option("--output", "-o", type=click.Path(), help="Output JSON scenario path")
+@click.option("--title", "-t", default="Recorded Scenario", help="Scenario title")
+@click.pass_context
+def record(ctx: click.Context, url: str, output: str | None, title: str) -> None:
+    """Record browser interactions and generate a JSON scenario."""
+    config = Config.load()
+    logger = setup_logger("videogen", config.logs_dir, ctx.obj["verbose"])
+
+    from .macro import record_macro
+    from .utils import slugify
+
+    if output:
+        output_path = Path(output)
+    else:
+        output_path = config.output_dir / f"{slugify(title)}.json"
+
+    try:
+        result = record_macro(url, output_path, title=title)
+        click.echo(f"Scenario saved: {result}")
+    except KeyboardInterrupt:
+        click.echo("Recording stopped")
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        sys.exit(1)
+
+
 @cli.command("list")
 def list_scenarios() -> None:
     """List available scenarios."""

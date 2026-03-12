@@ -44,8 +44,8 @@ Follow the **action-then-narrate** pattern:
 ### 4. Validate and preview
 
 ```bash
-python -m src validate my-scenario.json
-python -m src preview my-scenario.json
+neurascreen validate my-scenario.json
+neurascreen preview my-scenario.json
 ```
 
 Fix any failing steps before recording.
@@ -53,7 +53,7 @@ Fix any failing steps before recording.
 ### 5. Generate the video
 
 ```bash
-python -m src full my-scenario.json
+neurascreen full my-scenario.json
 ```
 
 ## Tips
