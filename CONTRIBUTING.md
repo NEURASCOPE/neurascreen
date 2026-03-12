@@ -21,14 +21,14 @@ Open an issue with the `enhancement` label. Describe the use case and why it wou
 1. Fork the repository
 2. Create a feature branch: `git checkout -b my-feature`
 3. Make your changes
-4. Test locally: `python -m src validate examples/01-simple-navigation.json`
+4. Test locally: `neurascreen validate examples/01-simple-navigation.json`
 5. Commit: `git commit -m "Add my feature"`
 6. Push: `git push origin my-feature`
 7. Open a pull request
 
 ## Adding a TTS provider
 
-TTS providers are defined in `src/tts.py`.
+TTS providers are defined in `neurascreen/tts.py`.
 
 1. Create a new class extending `BaseTTSClient`
 2. Implement the `_synthesize(text: str) -> bytes` method (must return WAV audio bytes)
@@ -47,9 +47,9 @@ class MyTTSClient(BaseTTSClient):
 
 ## Adding a scenario action
 
-Actions are defined in `src/browser.py` in the `_do_step()` method.
+Actions are defined in `neurascreen/browser.py` in the `_do_step()` method.
 
-1. Add your action name to `VALID_ACTIONS` in `src/scenario.py`
+1. Add your action name to `VALID_ACTIONS` in `neurascreen/scenario.py`
 2. Add validation rules in `validate_scenario()` if needed
 3. Implement the action in `_do_step()` using a `case` block
 4. Document the action in the README actions table

@@ -1,0 +1,15 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+output/
+temp/
+logs/
+scenarios/
+tests/
+.git/
+.github/
+SESSION.md
