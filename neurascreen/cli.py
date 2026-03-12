@@ -405,6 +405,87 @@ def gui() -> None:
     sys.exit(launch_gui(sys.argv[:1]))
 
 
+@cli.group("voices")
+def voices_group() -> None:
+    """Manage TTS voice configuration (~/.neurascreen/voices.json)."""
+    pass
+
+
+@voices_group.command("list")
+@click.option("--provider", "-p", default=None, help="Filter by provider name")
+def voices_list(provider: str | None) -> None:
+    """List configured voices per provider."""
+    from .gui.tts.voices import load_voices, PROVIDER_NAMES
+
+    configs = load_voices()
+    providers = [provider] if provider else PROVIDER_NAMES
+
+    for name in providers:
+        cfg = configs.get(name)
+        if cfg is None:
+            continue
+
+        default_marker = lambda vid: " (default)" if vid == cfg.default_voice else ""
+        click.echo(f"\n{name}")
+        click.echo(f"  Model: {cfg.default_model or '(none)'}")
+        if cfg.voices:
+            for v in cfg.voices:
+                click.echo(f"  {v.id:<30} {v.name}{default_marker(v.id)}")
+        else:
+            click.echo(f"  (no voices configured)")
+
+
+@voices_group.command("add")
+@click.argument("provider")
+@click.argument("voice_id")
+@click.argument("name")
+def voices_add(provider: str, voice_id: str, name: str) -> None:
+    """Add a voice to a provider."""
+    from .gui.tts.voices import load_voices, save_voices, add_voice
+
+    configs = load_voices()
+    if add_voice(configs, provider, voice_id, name):
+        save_voices(configs)
+        click.echo(f"Added voice '{voice_id}' ({name}) to {provider}")
+    else:
+        click.echo(f"Voice '{voice_id}' already exists in {provider}", err=True)
+        sys.exit(1)
+
+
+@voices_group.command("remove")
+@click.argument("provider")
+@click.argument("voice_id")
+def voices_remove(provider: str, voice_id: str) -> None:
+    """Remove a voice from a provider."""
+    from .gui.tts.voices import load_voices, save_voices, remove_voice
+
+    configs = load_voices()
+    if remove_voice(configs, provider, voice_id):
+        save_voices(configs)
+        click.echo(f"Removed voice '{voice_id}' from {provider}")
+    else:
+        click.echo(f"Voice '{voice_id}' not found in {provider}", err=True)
+        sys.exit(1)
+
+
+@voices_group.command("set-default")
+@click.argument("provider")
+@click.argument("voice_id")
+def voices_set_default(provider: str, voice_id: str) -> None:
+    """Set the default voice for a provider."""
+    from .gui.tts.voices import load_voices, save_voices
+
+    configs = load_voices()
+    cfg = configs.get(provider)
+    if cfg is None:
+        click.echo(f"Unknown provider: {provider}", err=True)
+        sys.exit(1)
+
+    cfg.default_voice = voice_id
+    save_voices(configs)
+    click.echo(f"Default voice for {provider} set to '{voice_id}'")
+
+
 @cli.command()
 @click.argument("scenario_path", type=click.Path(exists=True))
 def validate(scenario_path: str) -> None:
@@ -425,6 +506,24 @@ def validate(scenario_path: str) -> None:
 
     steps = len(data.get("steps", []))
     click.echo(f"Valid scenario: {data.get('title', 'Untitled')} ({steps} steps)")
+
+    # Check voice config against voices.json (warning only)
+    try:
+        from .gui.tts.voices import load_voices
+        config = Config.load()
+        if config.tts_voice_id and config.tts_provider:
+            configs = load_voices()
+            provider_cfg = configs.get(config.tts_provider)
+            if provider_cfg and provider_cfg.voices:
+                known_ids = {v.id for v in provider_cfg.voices}
+                if config.tts_voice_id not in known_ids:
+                    click.echo(
+                        f"  Warning: voice '{config.tts_voice_id}' not found in "
+                        f"voices.json for provider '{config.tts_provider}'",
+                        err=True,
+                    )
+    except ImportError:
+        pass
 
 
 def main() -> None:
