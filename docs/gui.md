@@ -18,14 +18,16 @@ neurascreen gui
 
 ## Overview
 
-The GUI has four main areas:
+The GUI has six main areas:
 
 | Area | Description |
 |------|-------------|
 | **Sidebar** (left) | File browser showing your scenario folders |
 | **Editor** (center) | Visual scenario editor with step list and detail panel |
-| **Tabs** (right) | Detail view, JSON source view, or split view |
+| **Tabs** (right of editor) | Detail view, JSON source view, or split view |
+| **TTS Panel** (right dock) | TTS config, voice management, narration stats, pronunciation |
 | **Console** (bottom) | Execution output, hidden by default |
+| **Output Browser** (center) | Video listing with integrated player, SRT/chapters viewers |
 
 ## Editing scenarios
 
@@ -98,6 +100,62 @@ The console panel opens automatically and shows real-time output. Colored by lev
 
 Options (checkboxes in the console panel): SRT subtitles, YouTube chapters, headless mode, verbose logging.
 
+When running from the GUI without the Headless checkbox, the browser always opens in headed mode (visible window) regardless of the `.env` setting.
+
+## Configuration Manager
+
+Open via **Tools > Configuration** or **Ctrl+,**.
+
+The configuration dialog provides a visual editor for all `.env` variables, organized in 7 tabs:
+
+| Tab | Settings |
+|-----|----------|
+| Application | APP_URL, APP_EMAIL, APP_PASSWORD, LOGIN_URL |
+| Browser | BROWSER_HEADLESS, VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_FPS |
+| Screen Capture | CAPTURE_SCREEN, CAPTURE_DISPLAY, BROWSER_SCREEN_OFFSET |
+| TTS | TTS_PROVIDER, TTS_API_KEY, TTS_VOICE_ID, TTS_MODEL |
+| Login Selectors | LOGIN_EMAIL_SELECTOR, LOGIN_PASSWORD_SELECTOR, LOGIN_SUBMIT_SELECTOR |
+| Canvas Selectors | SELECTOR_DRAGGABLE, SELECTOR_CANVAS, SELECTOR_DELETE_BUTTON, etc. |
+| Directories | OUTPUT_DIR, TEMP_DIR, LOGS_DIR, SCENARIOS_DIR |
+
+Features: real-time validation, reset to defaults, import/export `.env` files.
+
+## TTS & Audio Preview
+
+Open via **View > TTS Panel** or **Ctrl+Shift+T**.
+
+### Voice configuration
+
+Voices are stored per provider in `~/.neurascreen/voices.json`. Preset voices are included for OpenAI (9 voices), Google Cloud (10 French voices), and Coqui. Use the **+ Add** / **- Del** buttons to manage voices for Gradium, ElevenLabs, or any provider.
+
+### Audio preview
+
+Each narrated step in the step list has a **Play** button. Click it to generate and play the TTS audio for that step. Audio is cached — subsequent plays are instant.
+
+### Pronunciation helper
+
+An editable table of phonetic substitutions (e.g., "NeuraHub" → "Neura Hub" for correct TTS pronunciation). Saved to `~/.neurascreen/pronunciation.json`.
+
+### Narration statistics
+
+The panel shows: steps narrated / total, word count, estimated reading time (~130 words/min), total duration.
+
+## Output Browser
+
+Open via **View > Output Browser** or **Ctrl+Shift+O**.
+
+Browse generated videos in the `output/` directory:
+
+- **File table** — name, size, date, SRT/chapters indicators, sortable, searchable
+- **Video player** — integrated QMediaPlayer with play/pause, seek slider, volume, time display
+- **SRT viewer** — formatted subtitle display with timestamps
+- **Chapters viewer** — YouTube chapter markers
+- **YouTube viewer** — metadata file content
+
+Actions: double-click to play, right-click for context menu (open, copy path, delete), "Open Folder" button.
+
+The file list auto-refreshes when new videos are generated.
+
 ## Themes
 
 Two built-in themes:
@@ -154,6 +212,8 @@ The theme appears in the **View > Theme** menu on next launch.
 | F8 | Full (with TTS) |
 | Ctrl+R | Record macro |
 | Ctrl+, | Configuration |
+| Ctrl+Shift+O | Output browser |
+| Ctrl+Shift+T | TTS panel |
 | Ctrl+B | Toggle sidebar |
 | Ctrl+` | Toggle console |
 | Ctrl+T | Cycle theme |

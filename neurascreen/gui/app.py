@@ -5,9 +5,10 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import QSettings
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
-from .theme import ThemeEngine, DEFAULT_THEME
+from .theme import ThemeEngine, DEFAULT_THEME, RESOURCES_DIR
 from .main_window import MainWindow, ORG_NAME, APP_NAME, SETTINGS_THEME
 
 logger = logging.getLogger("neurascreen.gui")
@@ -24,9 +25,39 @@ class NeuraScreenApp:
 
     def run(self) -> int:
         """Launch the application and enter the event loop."""
-        self._app = QApplication(self._args)
+        # Set process/app name per platform so taskbar shows "NeuraScreen"
+        if sys.platform == "darwin":
+            try:
+                import ctypes
+                libc = ctypes.cdll.LoadLibrary("libc.dylib")
+                libc.setprogname(APP_NAME.encode("utf-8"))
+            except (OSError, AttributeError):
+                pass
+        elif sys.platform == "win32":
+            try:
+                import ctypes
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                    f"{ORG_NAME}.{APP_NAME}"
+                )
+            except (OSError, AttributeError):
+                pass
+        elif sys.platform.startswith("linux"):
+            try:
+                import ctypes
+                libc = ctypes.CDLL("libc.so.6")
+                libc.prctl(15, APP_NAME.encode("utf-8"), 0, 0, 0)  # PR_SET_NAME
+            except (OSError, AttributeError):
+                pass
+
+        self._app = QApplication([APP_NAME] + self._args[1:])
         self._app.setApplicationName(APP_NAME)
+        self._app.setApplicationDisplayName(APP_NAME)
         self._app.setOrganizationName(ORG_NAME)
+
+        # Application icon
+        icon_path = RESOURCES_DIR / "icon-256.png"
+        if icon_path.exists():
+            self._app.setWindowIcon(QIcon(str(icon_path)))
 
         # Set up logging for GUI
         gui_logger = logging.getLogger("neurascreen.gui")

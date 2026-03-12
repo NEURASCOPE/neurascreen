@@ -19,6 +19,7 @@ from .editor.file_browser import FileBrowser
 from .execution.run_panel import RunPanel
 from .config.config_dialog import ConfigDialog
 from .tts.tts_panel import TTSPanel
+from .output.output_browser import OutputBrowser
 
 logger = logging.getLogger("neurascreen.gui")
 
@@ -105,6 +106,10 @@ class MainWindow(QMainWindow):
         is_dark = self.theme_engine.current.is_dark if self.theme_engine.current else True
         self._editor = EditorWidget(dark=is_dark)
         self._central_stack.addWidget(self._editor)  # index 1
+
+        # Output browser
+        self._output_browser = OutputBrowser()
+        self._central_stack.addWidget(self._output_browser)  # index 2
 
         self.setCentralWidget(self._central_stack)
 
@@ -342,6 +347,14 @@ class MainWindow(QMainWindow):
         self._act_toggle_tts.setText("&TTS Panel")
         self._act_toggle_tts.setShortcut(QKeySequence("Ctrl+Shift+T"))
         view_menu.addAction(self._act_toggle_tts)
+
+        view_menu.addSeparator()
+
+        self._act_output = QAction("&Output Browser", self)
+        self._act_output.setShortcut(QKeySequence("Ctrl+Shift+O"))
+        self._act_output.setStatusTip("Browse generated videos")
+        self._act_output.triggered.connect(self._on_show_output)
+        view_menu.addAction(self._act_output)
 
         view_menu.addSeparator()
 
@@ -671,6 +684,13 @@ class MainWindow(QMainWindow):
         dialog.config_saved.connect(lambda: self.set_status("Configuration saved"))
         dialog.exec()
 
+    def _on_show_output(self) -> None:
+        """Switch to the output browser view."""
+        self._output_browser.refresh()
+        self._central_stack.setCurrentIndex(2)
+        self.setWindowTitle(f"Output Browser — {APP_NAME}")
+        self.set_status("Output browser")
+
     def _on_show_shortcuts(self) -> None:
         shortcuts = [
             ("Ctrl+N", "New scenario"),
@@ -689,6 +709,8 @@ class MainWindow(QMainWindow):
             ("F8", "Full (with TTS)"),
             ("Ctrl+R", "Record macro"),
             ("Ctrl+,", "Configuration"),
+            ("Ctrl+Shift+O", "Output browser"),
+            ("Ctrl+Shift+T", "TTS panel"),
             ("Ctrl+B", "Toggle sidebar"),
             ("Ctrl+T", "Cycle theme"),
             ("Ctrl+/", "Keyboard shortcuts"),

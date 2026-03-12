@@ -402,10 +402,13 @@ neurascreen gui
 - **Scenario editor** — visual step list with drag-reorder, adaptive detail panel for all 14 action types, JSON source view with syntax highlighting, split view
 - **File browser** — sidebar tree view of your scenario folders, double-click to open
 - **Execution panel** — run validate/preview/run/full from the GUI with real-time colored console output
+- **Configuration manager** — visual .env editor with 7 tabs (Application, Browser, Screen Capture, TTS, Selectors, Directories), validation, import/export
+- **TTS & audio preview** — per-provider voice config (`~/.neurascreen/voices.json`), per-step audio preview, pronunciation helper, narration statistics
+- **Output browser** — browse generated videos with integrated video player (QMediaPlayer), SRT subtitles viewer, YouTube chapters viewer
 - **Theme engine** — dark teal (default) and light themes, switchable via Ctrl+T. Create custom themes as JSON files in `~/.neurascreen/themes/`
 - **Step templates** — insert common patterns (navigation, drag & configure, form fill) from the context menu
 - **Undo/redo** — full undo history for all editing operations
-- **Keyboard shortcuts** — Ctrl+N/O/S, F5-F8 for commands, Ctrl+Z/Shift+Z for undo/redo
+- **Keyboard shortcuts** — Ctrl+N/O/S, F5-F8 for commands, Ctrl+Shift+O for output browser, Ctrl+Shift+T for TTS panel
 
 The GUI is optional — the CLI remains the primary interface and works without PySide6.
 
@@ -457,8 +460,12 @@ neurascreen/
 │       ├── main_window.py # Main window
 │       ├── theme.py      # Theme engine (JSON → QSS)
 │       ├── themes/       # Theme palettes (dark-teal, light)
+│       ├── resources/    # App icons, SVG arrows
 │       ├── editor/       # Scenario editor widgets
-│       └── execution/    # Command execution panel
+│       ├── execution/    # Command execution panel
+│       ├── config/       # Configuration manager (.env editor)
+│       ├── tts/          # TTS panel, audio preview, voices, pronunciation
+│       └── output/       # Output browser, video player, SRT/chapters viewers
 ├── tests/                # Unit tests (pytest)
 ├── examples/             # Example scenarios
 ├── docs/                 # Documentation
