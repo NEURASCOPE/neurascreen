@@ -20,6 +20,7 @@ from .execution.run_panel import RunPanel
 from .config.config_dialog import ConfigDialog
 from .tts.tts_panel import TTSPanel
 from .output.output_browser import OutputBrowser
+from .macro.recorder_dialog import RecorderDialog
 
 logger = logging.getLogger("neurascreen.gui")
 
@@ -414,6 +415,7 @@ class MainWindow(QMainWindow):
         self._act_record_macro = QAction("Record &Macro...", self)
         self._act_record_macro.setShortcut(QKeySequence("Ctrl+R"))
         self._act_record_macro.setStatusTip("Record browser interactions to JSON")
+        self._act_record_macro.triggered.connect(self._on_record_macro)
         tools_menu.addAction(self._act_record_macro)
 
         # -- Help --
@@ -448,6 +450,8 @@ class MainWindow(QMainWindow):
         toolbar.addAction(self._act_preview)
         toolbar.addAction(self._act_run)
         toolbar.addAction(self._act_full)
+        toolbar.addSeparator()
+        toolbar.addAction(self._act_record_macro)
 
         self.addToolBar(toolbar)
 
@@ -652,6 +656,7 @@ class MainWindow(QMainWindow):
 
     def _on_switch_theme(self, name: str) -> None:
         theme = self.theme_engine.apply_theme(name)
+        self._apply_theme_to_widgets(theme)
         self._status_theme.setText(f"Theme: {theme.name}")
         self.settings.setValue(SETTINGS_THEME, name)
         self._update_theme_menu_checks(name)
@@ -659,11 +664,20 @@ class MainWindow(QMainWindow):
 
     def _on_cycle_theme(self) -> None:
         theme = self.theme_engine.cycle_theme()
+        self._apply_theme_to_widgets(theme)
         name = theme.source_path.stem if theme.source_path else ""
         self._status_theme.setText(f"Theme: {theme.name}")
         self.settings.setValue(SETTINGS_THEME, name)
         self._update_theme_menu_checks(name)
         self.set_status(f"Theme: {theme.name}")
+
+    def _apply_theme_to_widgets(self, theme) -> None:
+        """Propagate theme changes to widgets with hardcoded colors."""
+        is_dark = theme.is_dark
+        # Editor JSON view + syntax highlighter
+        self._editor.set_dark_mode(is_dark)
+        # Step list refresh (action colors adapt via theme)
+        self._editor.refresh_step_list()
 
     def _update_theme_menu_checks(self, active_name: str) -> None:
         for action in self.menuBar().actions():
@@ -677,6 +691,26 @@ class MainWindow(QMainWindow):
                             theme_act.setChecked(theme_id == active_name)
                         break
                 break
+
+    def _on_record_macro(self) -> None:
+        """Open the macro recorder dialog."""
+        # Load default URL from config
+        default_url = ""
+        try:
+            from neurascreen.config import Config
+            config = Config.load()
+            default_url = config.app_url or ""
+        except Exception:
+            pass
+
+        dialog = RecorderDialog(parent=self, default_url=default_url)
+        dialog.scenario_ready.connect(self._on_recorded_scenario)
+        dialog.exec()
+
+    def _on_recorded_scenario(self, filepath: str) -> None:
+        """Open a recorded scenario in the editor."""
+        self._open_file(filepath)
+        self.set_status("Recorded scenario loaded")
 
     def _on_config(self) -> None:
         """Open the configuration dialog."""
