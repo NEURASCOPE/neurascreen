@@ -56,10 +56,12 @@ Optional PySide6 desktop interface: `pip install neurascreen[gui]`
 - [x] Scenario diff: compare two scenarios side by side (#32)
 - [x] Autosave & recovery: periodic save, recovery on startup (#32)
 
-## v1.6 — CLI Enhancements (planned)
+## v1.6 — CLI Enhancements (done)
 
-- [ ] CLI support for voices.json per-provider voice configuration (#33)
-- [ ] `neurascreen voices list/add/remove/set-default` commands
+- [x] CLI support for voices.json per-provider voice configuration (#33)
+- [x] `neurascreen voices list/add/remove/set-default` commands
+- [x] Config.load() fallback to voices.json defaults when .env voice/model empty
+- [x] `validate` warns if voice not found in voices.json
 
 ## Future Ideas
 

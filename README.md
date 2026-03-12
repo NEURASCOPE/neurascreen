@@ -378,10 +378,26 @@ All settings are in `.env`. See [`.env.example`](.env.example) for the full docu
 | `neurascreen batch <folder>` | Generate videos from all scenarios in a folder |
 | `neurascreen record <url>` | Record browser interactions → JSON scenario |
 | `neurascreen list` | List available scenarios |
+| `neurascreen voices list` | List configured TTS voices per provider |
+| `neurascreen voices add <provider> <id> <name>` | Add a voice to a provider |
+| `neurascreen voices remove <provider> <id>` | Remove a voice |
+| `neurascreen voices set-default <provider> <id>` | Set default voice for a provider |
 | `neurascreen --version` | Show version |
 | `neurascreen gui` | Launch desktop GUI (requires `[gui]` extra) |
 
 Options: `--verbose` / `-v` for debug output, `--headless` for headless mode, `--srt` for subtitle generation, `--chapters` for YouTube chapter markers.
+
+### Voice management
+
+Voices are stored per provider in `~/.neurascreen/voices.json` (shared with the GUI). If `TTS_VOICE_ID` or `TTS_MODEL` are not set in `.env`, the CLI uses defaults from `voices.json`.
+
+```bash
+neurascreen voices list                          # List all voices
+neurascreen voices list -p openai                # Filter by provider
+neurascreen voices add gradium abc123 "My voice" # Add a voice
+neurascreen voices set-default openai nova       # Set default
+neurascreen voices remove gradium abc123         # Remove
+```
 
 You can also use `python -m neurascreen` instead of `neurascreen`.
 

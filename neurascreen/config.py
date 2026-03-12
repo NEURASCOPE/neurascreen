@@ -126,7 +126,26 @@ class Config:
         config.logs_dir.mkdir(parents=True, exist_ok=True)
         config.scenarios_dir.mkdir(parents=True, exist_ok=True)
 
+        # Fallback to voices.json defaults if voice/model not set in .env
+        config._apply_voices_defaults()
+
         return config
+
+    def _apply_voices_defaults(self) -> None:
+        """Fill empty tts_voice_id/tts_model from voices.json defaults."""
+        if self.tts_voice_id and self.tts_model:
+            return
+        try:
+            from .gui.tts.voices import load_voices
+            configs = load_voices()
+            provider_cfg = configs.get(self.tts_provider)
+            if provider_cfg:
+                if not self.tts_voice_id and provider_cfg.default_voice:
+                    self.tts_voice_id = provider_cfg.default_voice
+                if not self.tts_model and provider_cfg.default_model:
+                    self.tts_model = provider_cfg.default_model
+        except ImportError:
+            pass
 
     def validate(self) -> list[str]:
         """Validate required configuration. Returns list of errors."""
