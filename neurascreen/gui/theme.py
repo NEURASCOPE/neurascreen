@@ -11,6 +11,9 @@ logger = logging.getLogger("neurascreen.gui")
 # Built-in themes directory
 THEMES_DIR = Path(__file__).parent / "themes"
 
+# Resources directory (SVG icons)
+RESOURCES_DIR = Path(__file__).parent / "resources"
+
 # User themes directory
 USER_THEMES_DIR = Path.home() / ".neurascreen" / "themes"
 
@@ -170,6 +173,10 @@ def generate_qss(theme: Theme) -> str:
     # Helper for color access with defaults
     def col(key: str, fallback: str = "#888") -> str:
         return c.get(key, fallback)
+
+    # SVG arrow paths (forward slashes for QSS url())
+    arrow_up = str(RESOURCES_DIR / "arrow-up.svg").replace("\\", "/")
+    arrow_down = str(RESOURCES_DIR / "arrow-down.svg").replace("\\", "/")
 
     return f"""
 /* ================================================================
@@ -403,16 +410,39 @@ QSpinBox:focus, QDoubleSpinBox:focus {{
     border-color: {col('input_focus_border', col('primary'))};
 }}
 
-QSpinBox::up-button, QSpinBox::down-button,
-QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {{
+QSpinBox::up-button, QDoubleSpinBox::up-button {{
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 22px;
     background-color: {col('surface_alt')};
-    border: none;
-    width: 20px;
+    border-left: {bw}px solid {col('border')};
+    border-top-right-radius: {r}px;
 }}
 
-QSpinBox::up-button:hover, QSpinBox::down-button:hover,
-QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {{
+QSpinBox::down-button, QDoubleSpinBox::down-button {{
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 22px;
+    background-color: {col('surface_alt')};
+    border-left: {bw}px solid {col('border')};
+    border-bottom-right-radius: {r}px;
+}}
+
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {{
     background-color: {col('hover')};
+}}
+
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {{
+    image: url({arrow_up});
+    width: 10px;
+    height: 10px;
+}}
+
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {{
+    image: url({arrow_down});
+    width: 10px;
+    height: 10px;
 }}
 
 /* --- Combo Box --- */
