@@ -18,6 +18,8 @@ neurascreen gui
 
 ## Overview
 
+![Welcome screen](images/capture_1.png)
+
 The GUI has six main areas:
 
 | Area | Description |
@@ -30,6 +32,8 @@ The GUI has six main areas:
 | **Output Browser** (center) | Video listing with integrated player, SRT/chapters viewers |
 
 ## Editing scenarios
+
+![Scenario editor — Detail view](images/capture_2.png)
 
 ### Create or open
 
@@ -70,9 +74,13 @@ Common fields (always visible): Wait after, Narration, Screenshot after step.
 
 ### JSON view
 
+![JSON view with syntax highlighting](images/capture_3.png)
+
 Switch to the **JSON** tab to edit the raw JSON directly. Changes sync bidirectionally with the visual editor. Syntax highlighting colors keys, strings, numbers and booleans.
 
 The **Split** tab shows both views side by side.
+
+![Split view — Detail + JSON](images/capture_4.png)
 
 ### Templates
 
@@ -105,6 +113,14 @@ When running from the GUI without the Headless checkbox, the browser always open
 ## Configuration Manager
 
 Open via **Tools > Configuration** or **Ctrl+,**.
+
+| Application | Browser | Screen Capture | TTS |
+|-------------|---------|----------------|-----|
+| ![App](images/capture_5.png) | ![Browser](images/capture_6.png) | ![Capture](images/capture_7.png) | ![TTS](images/capture_8.png) |
+
+| Login Selectors | Canvas Selectors | Directories |
+|-----------------|------------------|-------------|
+| ![Login](images/capture_9.png) | ![Canvas](images/capture_10.png) | ![Dirs](images/capture_11.png) |
 
 The configuration dialog provides a visual editor for all `.env` variables, organized in 7 tabs:
 
@@ -144,6 +160,10 @@ The panel shows: steps narrated / total, word count, estimated reading time (~13
 
 Open via **View > Output Browser** or **Ctrl+Shift+O**.
 
+| Video Player | SRT Subtitles | Chapters |
+|-------------|---------------|----------|
+| ![Player](images/capture_12.png) | ![SRT](images/capture_13.png) | ![Chapters](images/capture_14.png) |
+
 Browse generated videos in the `output/` directory:
 
 - **File table** — name, size, date, SRT/chapters indicators, sortable, searchable
@@ -155,6 +175,78 @@ Browse generated videos in the `output/` directory:
 Actions: double-click to play, right-click for context menu (open, copy path, delete), "Open Folder" button.
 
 The file list auto-refreshes when new videos are generated.
+
+## Macro Recorder
+
+Open via **Tools > Record Macro** or **Ctrl+R**.
+
+![Macro Recorder](images/capture_16.png)
+
+Record browser interactions and convert them to a scenario:
+
+1. Enter the **Start URL** and an optional **Title**
+2. Click **Start Recording** — a Chromium browser opens
+3. Interact normally — clicks, navigations, scrolls and key presses are captured
+4. The **live event feed** shows captured events in real time (color-coded by type)
+5. Close the browser or click **Stop Recording**
+6. Review the results and apply **cleanup options**:
+   - **Dedup clicks** — remove rapid double-clicks on the same element
+   - **Merge navigations** — keep only the last of consecutive navigation events
+   - **Cap waits** — limit pauses to 5 seconds, remove pauses under 500ms
+7. Click **Open in Editor** to load the scenario directly, or **Save as...** to export as JSON
+
+## Selector Validator
+
+Open via **Tools > Validate Selectors** or **Ctrl+Shift+V** (requires an open scenario).
+
+![Selector Validator](images/capture_18.png)
+
+Verifies that all CSS selectors and click texts in your scenario exist in the real DOM:
+
+1. Enter the **Base URL** of your application
+2. Click **Validate** — Playwright launches headless and checks each selector
+3. Results appear in real time with status:
+   - **found** — selector matches exactly one element
+   - **not found** — selector not found (with suggestions if a similar selector exists)
+   - **multiple** — selector matches more than one element
+   - **skipped** — page could not be loaded
+4. **Double-click** a result to jump to that step in the editor
+
+## Scenario Statistics
+
+Open via **Tools > Statistics** (requires an open scenario).
+
+![Scenario Statistics](images/capture_17.png)
+
+Shows metrics for the current scenario:
+
+- Total steps and breakdown by action type
+- Narrated vs silent steps
+- Word count and estimated reading time (~130 words/min)
+- Estimated total duration (reading + waits)
+- Unique URLs visited
+- Unique CSS selectors used
+
+## Scenario Diff
+
+Open via **Tools > Compare Scenarios**.
+
+![Compare Scenarios](images/capture_19.png)
+
+Compare two JSON scenario files side by side:
+
+1. Select **File A** and **File B**
+2. Click **Compare**
+3. A table shows each step with status: unchanged, modified, added, or removed
+4. Modified steps list the changed fields (e.g., "selector", "narration")
+
+## Autosave & Recovery
+
+NeuraScreen automatically saves your work every 60 seconds to `~/.neurascreen/autosave/`.
+
+- If you quit without saving, a **recovery dialog** appears on next launch
+- Choose **Recover** to reload the autosaved scenario, or **Discard** to start fresh
+- Autosave is cleared when you save manually
 
 ## Themes
 
@@ -211,6 +303,7 @@ The theme appears in the **View > Theme** menu on next launch.
 | F7 | Run |
 | F8 | Full (with TTS) |
 | Ctrl+R | Record macro |
+| Ctrl+Shift+V | Validate selectors |
 | Ctrl+, | Configuration |
 | Ctrl+Shift+O | Output browser |
 | Ctrl+Shift+T | TTS panel |
