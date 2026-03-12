@@ -21,6 +21,7 @@
     "selection_text": "#FFFFFF",
     "hover": "#333333",
     "pressed": "#0F766E",
+    "pressed_text": "#FFFFFF",
     "disabled_bg": "#282828",
     "disabled_text": "#555555",
     "input_bg": "#282828",

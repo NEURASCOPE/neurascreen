@@ -54,6 +54,10 @@ class NeuraScreenApp:
         self._app.setApplicationDisplayName(APP_NAME)
         self._app.setOrganizationName(ORG_NAME)
 
+        # Force Fusion style so QSS has full control over colors
+        # (macOS native style ignores many QSS background/color rules)
+        self._app.setStyle("Fusion")
+
         # Application icon
         icon_path = RESOURCES_DIR / "icon-256.png"
         if icon_path.exists():

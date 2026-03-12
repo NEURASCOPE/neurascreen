@@ -30,7 +30,7 @@ class JsonView(QWidget):
         self._status_label = QLabel("JSON Source")
         self._status_label.setProperty("muted", True)
         self._error_label = QLabel("")
-        self._error_label.setStyleSheet("color: #EF4444;")
+        self._error_label.setProperty("error_label", True)
         status_layout.addWidget(self._status_label)
         status_layout.addStretch()
         status_layout.addWidget(self._error_label)
