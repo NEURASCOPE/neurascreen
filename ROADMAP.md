@@ -46,11 +46,17 @@ Optional PySide6 desktop interface: `pip install neurascreen[gui]`
 - [x] Theme engine: JSON palettes → dynamic QSS, dark teal + light themes (#25)
 - [x] Scenario editor: visual step list, adaptive detail panel, JSON source view (#26)
 - [x] Execution panel: run commands from GUI with real-time console logs (#27)
-- [ ] TTS & audio preview: per-step narration preview, pronunciation helper (#28)
-- [ ] Configuration manager: visual .env editor with tabbed interface (#29)
-- [ ] Output browser: browse generated videos, SRT/chapters viewers (#30)
+- [x] Configuration manager: visual .env editor with 7 tabs (#29)
+- [x] TTS & audio preview: per-provider voice config, per-step preview, pronunciation helper (#28)
+- [x] Output browser: video list, integrated player, SRT/chapters/YouTube viewers (#30)
+- [x] App icon and cross-platform process name
 - [ ] Macro recorder integration: record browser interactions from GUI (#31)
 - [ ] Advanced: selector validator, scenario stats, diff viewer, autosave (#32)
+
+## v1.6 — CLI Enhancements (planned)
+
+- [ ] CLI support for voices.json per-provider voice configuration (#33)
+- [ ] `neurascreen voices list/add/remove/set-default` commands
 
 ## Future Ideas
 

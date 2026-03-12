@@ -25,7 +25,31 @@ class NeuraScreenApp:
 
     def run(self) -> int:
         """Launch the application and enter the event loop."""
-        self._app = QApplication(self._args)
+        # Set process/app name per platform so taskbar shows "NeuraScreen"
+        if sys.platform == "darwin":
+            try:
+                import ctypes
+                libc = ctypes.cdll.LoadLibrary("libc.dylib")
+                libc.setprogname(APP_NAME.encode("utf-8"))
+            except (OSError, AttributeError):
+                pass
+        elif sys.platform == "win32":
+            try:
+                import ctypes
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                    f"{ORG_NAME}.{APP_NAME}"
+                )
+            except (OSError, AttributeError):
+                pass
+        elif sys.platform.startswith("linux"):
+            try:
+                import ctypes
+                libc = ctypes.CDLL("libc.so.6")
+                libc.prctl(15, APP_NAME.encode("utf-8"), 0, 0, 0)  # PR_SET_NAME
+            except (OSError, AttributeError):
+                pass
+
+        self._app = QApplication([APP_NAME] + self._args[1:])
         self._app.setApplicationName(APP_NAME)
         self._app.setApplicationDisplayName(APP_NAME)
         self._app.setOrganizationName(ORG_NAME)
