@@ -389,6 +389,22 @@ def list_scenarios() -> None:
             click.echo(f"  {f.name:<40} [invalid JSON]")
 
 
+@cli.command("gui")
+def gui() -> None:
+    """Launch the graphical user interface."""
+    try:
+        from .gui import launch_gui
+    except ImportError:
+        click.echo(
+            "PySide6 is required for the GUI. Install it with:\n"
+            "  pip install neurascreen[gui]",
+            err=True,
+        )
+        sys.exit(1)
+
+    sys.exit(launch_gui(sys.argv[:1]))
+
+
 @cli.command()
 @click.argument("scenario_path", type=click.Path(exists=True))
 def validate(scenario_path: str) -> None:

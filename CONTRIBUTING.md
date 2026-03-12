@@ -65,5 +65,5 @@ Actions are defined in `neurascreen/browser.py` in the `_do_step()` method.
 
 NeuraScreen should remain:
 - **Simple** — easy to understand and modify
-- **Scriptable** — CLI-first, no GUI
+- **Scriptable** — CLI-first, optional GUI (`pip install neurascreen[gui]`)
 - **Focused** — generate demo videos, nothing else

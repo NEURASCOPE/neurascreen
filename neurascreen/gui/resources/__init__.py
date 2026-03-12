@@ -1,0 +1,1 @@
+"""GUI resources (icons, images)."""
