@@ -31,6 +31,7 @@ class EditorWidget(QWidget):
     dirty_changed = Signal(bool)  # True when unsaved changes
     title_changed = Signal(str)  # scenario title changed
     file_changed = Signal(str)  # file path changed
+    audio_preview_requested = Signal(int, str)  # (step_index, narration_text)
 
     def __init__(self, parent=None, dark: bool = True):
         super().__init__(parent)
@@ -123,6 +124,7 @@ class EditorWidget(QWidget):
         self._step_list.request_move_up.connect(self._on_move_up)
         self._step_list.request_move_down.connect(self._on_move_down)
         self._step_list.request_insert_template.connect(self._on_insert_template)
+        self._step_list.request_audio_preview.connect(self.audio_preview_requested)
 
         step_list_wrapper = QWidget()
         step_list_layout = QVBoxLayout(step_list_wrapper)

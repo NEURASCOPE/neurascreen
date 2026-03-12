@@ -18,6 +18,7 @@ from .editor.editor_widget import EditorWidget
 from .editor.file_browser import FileBrowser
 from .execution.run_panel import RunPanel
 from .config.config_dialog import ConfigDialog
+from .tts.tts_panel import TTSPanel
 
 logger = logging.getLogger("neurascreen.gui")
 
@@ -45,14 +46,17 @@ class MainWindow(QMainWindow):
         self._setup_central()
         self._setup_sidebar()
         self._setup_execution_dock()
+        self._setup_tts_dock()
         self._setup_menu_bar()
         self._setup_toolbar()
         self._setup_status_bar()
         self._connect_editor()
         self._connect_execution()
+        self._connect_tts()
         self._restore_state()
         self._load_recent_files()
         self._init_sidebar_roots()
+        self._load_tts_config()
 
         logger.info("Main window initialized")
 
@@ -185,6 +189,59 @@ class MainWindow(QMainWindow):
         self._run_panel.run_command(command, path)
 
     # ------------------------------------------------------------------ #
+    #  TTS dock                                                           #
+    # ------------------------------------------------------------------ #
+
+    def _setup_tts_dock(self) -> None:
+        """Set up the right TTS panel dock."""
+        self._tts_dock = QDockWidget("TTS & Audio", self)
+        self._tts_dock.setObjectName("tts_panel")
+        self._tts_dock.setFeatures(
+            QDockWidget.DockWidgetFeature.DockWidgetMovable
+            | QDockWidget.DockWidgetFeature.DockWidgetClosable
+        )
+
+        # Custom title bar with top padding to align with toolbar
+        title_widget = QWidget()
+        title_layout = QVBoxLayout(title_widget)
+        title_layout.setContentsMargins(8, 20, 8, 0)
+        title_label = QLabel("TTS Audio")
+        title_label.setProperty("subheading", True)
+        title_layout.addWidget(title_label)
+        self._tts_dock.setTitleBarWidget(title_widget)
+
+        self._tts_panel = TTSPanel()
+        self._tts_dock.setWidget(self._tts_panel)
+        self._tts_dock.setMinimumWidth(280)
+
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self._tts_dock)
+        self._tts_dock.hide()
+
+    def _connect_tts(self) -> None:
+        """Connect TTS panel to the editor for stats and audio preview."""
+        self._editor.dirty_changed.connect(self._update_tts_stats)
+        self._editor.audio_preview_requested.connect(self._on_audio_preview)
+
+    def _on_audio_preview(self, step_index: int, text: str) -> None:
+        """Handle audio preview request from the step list."""
+        self._tts_dock.show()
+        self._tts_panel.audio_manager.preview_step(step_index, text)
+        self.set_status(f"Audio preview: step {step_index + 1}")
+
+    def _load_tts_config(self) -> None:
+        """Load TTS config from .env into the TTS panel."""
+        try:
+            from neurascreen.config import Config
+            config = Config.load()
+            self._tts_panel.load_config(config)
+        except Exception as e:
+            logger.warning("Failed to load TTS config: %s", e)
+
+    def _update_tts_stats(self, _dirty: bool = False) -> None:
+        """Update TTS stats from current editor steps."""
+        self._tts_panel.update_stats(self._editor._steps)
+
+    # ------------------------------------------------------------------ #
     #  Menu bar                                                           #
     # ------------------------------------------------------------------ #
 
@@ -280,6 +337,11 @@ class MainWindow(QMainWindow):
         self._act_toggle_console.setText("&Console")
         self._act_toggle_console.setShortcut(QKeySequence("Ctrl+`"))
         view_menu.addAction(self._act_toggle_console)
+
+        self._act_toggle_tts = self._tts_dock.toggleViewAction()
+        self._act_toggle_tts.setText("&TTS Panel")
+        self._act_toggle_tts.setShortcut(QKeySequence("Ctrl+Shift+T"))
+        view_menu.addAction(self._act_toggle_tts)
 
         view_menu.addSeparator()
 
