@@ -40,6 +40,12 @@ class CommandRunner(QThread):
         self.line_output.emit("")
 
         try:
+            # Build environment: force headed mode unless headless is checked
+            import os
+            env = os.environ.copy()
+            if not self._options.get("headless"):
+                env["BROWSER_HEADLESS"] = "false"
+
             self._process = subprocess.Popen(
                 cmd,
                 stdout=subprocess.PIPE,
@@ -47,6 +53,7 @@ class CommandRunner(QThread):
                 text=True,
                 bufsize=1,
                 cwd=str(Path(self._scenario_path).parent.parent),
+                env=env,
             )
 
             for line in iter(self._process.stdout.readline, ""):

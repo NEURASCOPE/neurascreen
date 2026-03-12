@@ -5,9 +5,10 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import QSettings
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
-from .theme import ThemeEngine, DEFAULT_THEME
+from .theme import ThemeEngine, DEFAULT_THEME, RESOURCES_DIR
 from .main_window import MainWindow, ORG_NAME, APP_NAME, SETTINGS_THEME
 
 logger = logging.getLogger("neurascreen.gui")
@@ -26,7 +27,13 @@ class NeuraScreenApp:
         """Launch the application and enter the event loop."""
         self._app = QApplication(self._args)
         self._app.setApplicationName(APP_NAME)
+        self._app.setApplicationDisplayName(APP_NAME)
         self._app.setOrganizationName(ORG_NAME)
+
+        # Application icon
+        icon_path = RESOURCES_DIR / "icon-256.png"
+        if icon_path.exists():
+            self._app.setWindowIcon(QIcon(str(icon_path)))
 
         # Set up logging for GUI
         gui_logger = logging.getLogger("neurascreen.gui")
