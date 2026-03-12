@@ -8,7 +8,7 @@ from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QSplitter, QToolBar,
-    QStatusBar, QDockWidget, QFileDialog,
+    QStatusBar, QDockWidget, QFileDialog, QMenu,
     QMessageBox, QStackedWidget,
     QApplication,
 )
@@ -276,7 +276,8 @@ class MainWindow(QMainWindow):
         self._act_open.triggered.connect(self._on_open)
         file_menu.addAction(self._act_open)
 
-        self._recent_menu = file_menu.addMenu("Open &Recent")
+        self._recent_menu = QMenu("Open &Recent", self)
+        file_menu.addMenu(self._recent_menu)
         self._update_recent_menu()
 
         file_menu.addSeparator()
