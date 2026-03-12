@@ -17,6 +17,7 @@ from .theme import ThemeEngine
 from .editor.editor_widget import EditorWidget
 from .editor.file_browser import FileBrowser
 from .execution.run_panel import RunPanel
+from .config.config_dialog import ConfigDialog
 
 logger = logging.getLogger("neurascreen.gui")
 
@@ -329,6 +330,8 @@ class MainWindow(QMainWindow):
         self._act_config = QAction("&Configuration...", self)
         self._act_config.setShortcut(QKeySequence("Ctrl+,"))
         self._act_config.setStatusTip("Open configuration editor")
+        self._act_config.setMenuRole(QAction.MenuRole.NoRole)
+        self._act_config.triggered.connect(self._on_config)
         tools_menu.addAction(self._act_config)
 
         tools_menu.addSeparator()
@@ -599,6 +602,12 @@ class MainWindow(QMainWindow):
                             theme_act.setChecked(theme_id == active_name)
                         break
                 break
+
+    def _on_config(self) -> None:
+        """Open the configuration dialog."""
+        dialog = ConfigDialog(parent=self)
+        dialog.config_saved.connect(lambda: self.set_status("Configuration saved"))
+        dialog.exec()
 
     def _on_show_shortcuts(self) -> None:
         shortcuts = [
