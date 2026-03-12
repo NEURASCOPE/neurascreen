@@ -17,15 +17,15 @@
 - [x] pyproject.toml for `pip install neurascreen`
 - [x] `neurascreen` CLI entry point (instead of `python -m src`)
 - [x] `--version` flag
-- [ ] Configurable login form selectors (#3)
-- [ ] Configurable canvas/modal selectors for drag/delete_node/close_modal (#4)
-- [ ] Unit tests for assembler and utils (#5)
+- [x] Configurable login form selectors (#3)
+- [x] Configurable canvas/modal selectors for drag/delete_node/close_modal (#4)
+- [x] Unit tests for assembler and utils (#5)
 
 ## v1.2 — Cross-platform
 
-- [ ] Linux screen capture via x11grab (#1)
-- [ ] Linux audio playback via aplay/paplay (#2)
-- [ ] Windows screen capture via gdigrab (#8)
+- [x] Linux screen capture via x11grab (#1)
+- [x] Linux audio playback via aplay/paplay (#2)
+- [x] Windows screen capture via gdigrab (#8)
 
 ## v1.3 — Production features
 

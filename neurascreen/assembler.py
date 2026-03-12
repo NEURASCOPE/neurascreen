@@ -40,7 +40,12 @@ class Assembler:
     @staticmethod
     def _check_ffmpeg() -> None:
         if not shutil.which("ffmpeg"):
-            raise RuntimeError("ffmpeg not found. Install it: brew install ffmpeg")
+            raise RuntimeError(
+                "ffmpeg not found. Install it: "
+                "brew install ffmpeg (macOS) / "
+                "sudo apt install ffmpeg (Linux) / "
+                "choco install ffmpeg (Windows)"
+            )
 
     def convert_to_mp4(
         self,

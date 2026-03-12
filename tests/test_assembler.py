@@ -28,6 +28,7 @@ def _make_config(tmp_path: Path) -> Config:
         video_height=1080,
         video_fps=30,
         capture_screen=0,
+        capture_display="",
         browser_screen_offset=0,
         tts_provider="gradium",
         tts_api_key="",

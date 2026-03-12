@@ -9,6 +9,7 @@ from pathlib import Path
 from playwright.sync_api import Page, BrowserContext, sync_playwright, Playwright
 
 from .config import Config
+from .platform import get_audio_play_command
 from .scenario import Scenario, Step
 
 logger = logging.getLogger("videogen")
@@ -171,11 +172,12 @@ class BrowserEngine:
 
     @staticmethod
     def _play_audio(audio_path: Path) -> subprocess.Popen | None:
-        """Play a WAV file in background via afplay (macOS)."""
+        """Play a WAV file in background using the platform-native player."""
         if not audio_path or not audio_path.exists():
             return None
+        cmd = get_audio_play_command(str(audio_path))
         return subprocess.Popen(
-            ["afplay", str(audio_path)],
+            cmd,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )

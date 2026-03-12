@@ -1,11 +1,11 @@
 # NeuraScreen
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.0-blue)
 ![PyPI](https://img.shields.io/badge/pip_install-neurascreen-3775A9?logo=pypi&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)
 ![Playwright](https://img.shields.io/badge/playwright-1.52-2EAD33?logo=playwright&logoColor=white)
 ![ffmpeg](https://img.shields.io/badge/ffmpeg-required-007808?logo=ffmpeg&logoColor=white)
-![Platform](https://img.shields.io/badge/platform-macOS-lightgrey?logo=apple&logoColor=white)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **Automated demo video generator for web applications.**
@@ -339,11 +339,12 @@ All settings are in `.env`. See [`.env.example`](.env.example) for the full docu
 | `VIDEO_FPS` | `30` | Frames per second |
 | `BROWSER_HEADLESS` | `false` | Headless mode |
 
-### Screen capture (multi-monitor)
+### Screen capture (multi-monitor / multi-platform)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `CAPTURE_SCREEN` | `0` | ffmpeg screen index |
+| `CAPTURE_SCREEN` | `0` | ffmpeg screen index (macOS avfoundation) |
+| `CAPTURE_DISPLAY` | `""` | Display identifier — Linux: X11 display (e.g. `:0.0`), Windows: `desktop` or `title=Window Name` |
 | `BROWSER_SCREEN_OFFSET` | `0` | Browser X pixel offset |
 
 ---
@@ -398,6 +399,7 @@ neurascreen/
 │   ├── config.py         # Configuration loader
 │   ├── scenario.py       # JSON parser & validator
 │   ├── browser.py        # Playwright browser engine
+│   ├── platform.py       # OS detection & platform-specific commands
 │   ├── recorder.py       # Screen capture (ffmpeg)
 │   ├── narrator.py       # TTS & timing sync
 │   ├── tts.py            # TTS abstraction (5 providers)
@@ -418,8 +420,8 @@ neurascreen/
 | Feature | macOS | Linux | Windows |
 |---------|-------|-------|---------|
 | Browser automation | Yes | Yes | Yes |
-| Screen capture | Yes (avfoundation) | Planned (x11grab) | Planned (gdigrab) |
-| Audio playback | Yes (afplay) | Planned (aplay) | Planned (powershell) |
+| Screen capture | Yes (avfoundation) | Yes (x11grab) | Yes (gdigrab) |
+| Audio playback | Yes (afplay) | Yes (paplay/aplay) | Yes (PowerShell) |
 | TTS | Yes | Yes | Yes |
 | Video assembly | Yes | Yes | Yes |
 

@@ -29,8 +29,9 @@ class Config:
     video_height: int
     video_fps: int
 
-    # Screen capture (macOS)
+    # Screen capture
     capture_screen: int
+    capture_display: str
     browser_screen_offset: int
 
     # TTS
@@ -80,6 +81,7 @@ class Config:
             video_fps=int(os.getenv("VIDEO_FPS", "30")),
             # Screen capture
             capture_screen=int(os.getenv("CAPTURE_SCREEN", "0")),
+            capture_display=os.getenv("CAPTURE_DISPLAY", ""),
             browser_screen_offset=int(os.getenv("BROWSER_SCREEN_OFFSET", "0")),
             # TTS
             tts_provider=os.getenv("TTS_PROVIDER", "gradium"),
