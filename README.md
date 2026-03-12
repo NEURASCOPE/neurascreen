@@ -52,6 +52,16 @@ Watch NeuraScreen generate a full demo video from a JSON scenario — preview, T
 
 ---
 
+## Desktop GUI
+
+NeuraScreen includes an optional desktop application (PySide6) for editing scenarios, previewing TTS audio and managing configuration visually.
+
+![NeuraScreen GUI](docs/images/gui-screenshot.png)
+
+Install with GUI support: `pip install neurascreen[gui]` then launch with `neurascreen gui`.
+
+---
+
 ## Quick Start
 
 ### 1. Install
