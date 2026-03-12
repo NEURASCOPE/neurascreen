@@ -7,6 +7,8 @@ dist/
 build/
 output/*.mp4
 output/*.mkv
+output/*.srt
+output/*.chapters.txt
 output/*.youtube.md
 temp/
 logs/
