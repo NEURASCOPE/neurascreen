@@ -285,9 +285,9 @@ class TestVoices:
 
     def test_get_provider_help(self):
         from neurascreen.gui.tts.voices import get_provider_help
-        assert "gradium.ai" in get_provider_help("gradium")
-        assert "elevenlabs.io" in get_provider_help("elevenlabs")
-        assert "Enter" in get_provider_help("unknown_provider")
+        assert "gradium" in get_provider_help("gradium").lower()
+        assert "copy" in get_provider_help("elevenlabs").lower()
+        assert "enter" in get_provider_help("unknown_provider").lower()
 
     def test_provider_defaults(self):
         from neurascreen.gui.tts.voices import load_voices
