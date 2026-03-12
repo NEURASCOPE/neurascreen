@@ -31,7 +31,7 @@ echo "  Activated .venv"
 
 # 3. Install Python dependencies
 echo "[3/5] Installing Python dependencies..."
-pip install -q -r requirements.txt
+pip install -q -e ".[all]"
 echo "  Dependencies installed."
 
 # 4. Install Playwright Chromium
@@ -65,6 +65,6 @@ echo "  Setup complete!"
 echo ""
 echo "  Next steps:"
 echo "    1. Edit .env with your configuration"
-echo "    2. python -m src validate examples/01-simple-navigation.json"
-echo "    3. python -m src full examples/01-simple-navigation.json"
+echo "    2. neurascreen validate examples/01-simple-navigation.json"
+echo "    3. neurascreen full examples/01-simple-navigation.json"
 echo ""
