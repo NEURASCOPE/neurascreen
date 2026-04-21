@@ -1,7 +1,7 @@
 # Core
 playwright==1.52.0
 click==8.1.8
-python-dotenv==1.1.0
+python-dotenv==1.2.2
 requests>=2.31.0
 
 # TTS providers — install the one you need
